@@ -1,5 +1,11 @@
 # Fire Poker
 
+## Conta firebase
+```
+email: firepoker256@gmail.com
+senha: fir3p0ker123
+```
+
 ## Instalação e execução
 
 **Instalação das dependências**

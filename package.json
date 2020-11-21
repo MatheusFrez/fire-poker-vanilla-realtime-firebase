@@ -54,6 +54,7 @@
     "last 3 safari versions"
   ],
   "dependencies": {
-    "firebase": "^8.1.1"
+    "firebase": "^8.1.1",
+    "rxjs": "^6.6.3"
   }
 }

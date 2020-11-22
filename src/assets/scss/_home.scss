@@ -1,0 +1,31 @@
+#home {
+
+  input {
+    color: white;
+  }
+
+  label {
+    color: white !important;
+  }
+
+  .container {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    height: 100vh;
+  }
+
+  #card-title {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    h4 {
+      margin-top:0;
+      color:white;
+    }
+  }
+
+  .d-none {
+    display: none;
+  }
+}

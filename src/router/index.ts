@@ -1,5 +1,6 @@
 import HomeController from '../controllers/home.controller';
 import RoomController from '../controllers/room.controller';
+import HistoryRegisterView from '../controllers/history-register.controller';
 import NotFoundView from '../views/not-found.view';
 import Router from './router';
 
@@ -15,6 +16,12 @@ const router = new Router({
     callback: (id) => {
       new RoomController()
         .init(id);
+    },
+  }, {
+    path: /^\/room\/register\/histories\/?(\?.*)?$/,
+    callback: () => {
+      new HistoryRegisterView()
+        .init();
     },
   }],
   notFound: () => {

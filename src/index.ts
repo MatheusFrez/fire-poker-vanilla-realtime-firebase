@@ -1,4 +1,5 @@
 import './register-service-worker';
+import './router';
 
 // EXAMPLE LISTENING A ROOM
 import RoomSingletonService from './services/room-service';

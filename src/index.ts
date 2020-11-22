@@ -1,23 +1,26 @@
 import './register-service-worker';
 
 // EXAMPLE LISTENING A ROOM
-import RoomFiredbSingletonService from './services/room-firedb-service';
+import RoomSingletonService from './services/room-service';
 import Room from './models/room';
 
-const roomService: RoomFiredbSingletonService = RoomFiredbSingletonService.getInstance();
+const roomService: RoomSingletonService = RoomSingletonService.getInstance();
 
 roomService.upsert({
   finished: false,
   identifier: 'dasiudashuadsk CHANGED 3',
-  players: [],
+  players: [{
+    name: 'doidao',
+    role: 'dasdasdas',
+  }],
   title: 'teste',
   userStories: [],
   id: 'dsasdasaddsa',
 });
 
-roomService.listenCollection('dsasdasaddsa').subscribe(
+roomService.listenCollection('dsasdasaddsa', 'finished').subscribe(
   (room: Room) => {
-    console.log('SALA ALTERADA NO FIRABAS QUE ESTOU OUVINDO ALTERAÇÕES', room);
+    console.log('DADO ALTERADO NA SALA DESSE SUBJECT', room);
   },
 );
 

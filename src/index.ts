@@ -1,4 +1,6 @@
 import './register-service-worker';
+
+// EXAMPLE LISTENING A ROOM
 import RoomFiredbSingletonService from './services/room-firedb-service';
 import Room from './models/room';
 
@@ -13,8 +15,10 @@ roomService.upsert({
   id: 'dsasdasaddsa',
 });
 
-roomService.listenCollection().subscribe(
+roomService.listenCollection('dsasdasaddsa').subscribe(
   (room: Room) => {
-    // console.log('SALA QUE CHEGOU QUE FOI ALTERADA', room);
+    console.log('SALA ALTERADA NO FIRABAS QUE ESTOU OUVINDO ALTERAÇÕES', room);
   },
 );
+
+// END EXAMPLE

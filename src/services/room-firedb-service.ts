@@ -30,14 +30,17 @@ export default class RoomFiredbSingletonService {
       .then(() => room);
   }
 
-  public listenCollection (): Observable<Room> {
+  public listenCollection (id: string): Observable<Room> {
     try {
       return Observable.create(
         (observer) => {
           fireDb.collection(this.collection)
             .onSnapshot(querySnapshot => {
               querySnapshot.forEach((docChanged) => {
-                observer.next(docChanged.data());
+                const doc = docChanged.data();
+                if (doc.id === id) {
+                  observer.next(doc);
+                }
               });
             });
         },

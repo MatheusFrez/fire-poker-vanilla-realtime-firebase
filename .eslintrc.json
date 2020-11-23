@@ -19,6 +19,7 @@
   "rules": {
     "semi": ["error", "always"],
     "comma-dangle": ["error", "always-multiline"],
-    "no-console": "warn"
+    "no-console": "warn",
+    "no-useless-constructor": "warn"
   }
 }

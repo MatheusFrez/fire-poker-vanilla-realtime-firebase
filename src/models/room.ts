@@ -20,12 +20,12 @@ export default class Room {
     players: Array<Player>,
     userStories: Array<UserStories>
   }) {
-    this.id = params.id;
-    this.title = params.title;
-    this.identifier = params.identifier;
-    this.finished = params.finished;
-    this.settings = params.settings;
-    this.players = params.players;
-    this.userStories = params.userStories;
+    this.id = params?.id;
+    this.title = params?.title;
+    this.identifier = params?.identifier;
+    this.finished = params?.finished;
+    this.settings = params?.settings;
+    this.players = params?.players;
+    this.userStories = params?.userStories;
   }
 }

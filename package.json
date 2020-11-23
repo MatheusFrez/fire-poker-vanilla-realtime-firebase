@@ -7,7 +7,8 @@
     "dev": "parcel ./src/index.html --no-cache",
     "build": "parcel build ./src/index.html --no-cache --no-source-maps",
     "lint": "eslint ./src/*.ts",
-    "test": "jest"
+    "test": "jest",
+    "test-watch": "jest --watch"
   },
   "repository": {
     "type": "git",
@@ -54,6 +55,7 @@
     "last 3 safari versions"
   ],
   "dependencies": {
-    "firebase": "^8.1.1"
+    "firebase": "^8.1.1",
+    "rxjs": "^6.6.3"
   }
 }

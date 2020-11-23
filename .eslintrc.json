@@ -20,7 +20,6 @@
     "semi": ["error", "always"],
     "comma-dangle": ["error", "always-multiline"],
     "no-console": "warn",
-    "eqeqeq": "warn",
-    "no-new": "warn"
+    "no-useless-constructor": "warn"
   }
 }

@@ -1,4 +1,4 @@
-import firebase from 'firebase/app';
+import firebase from 'firebase';
 import 'firebase/firestore';
 
 if (!firebase.apps.length) {
@@ -16,4 +16,4 @@ if (!firebase.apps.length) {
   firebase.firestore().settings({});
 }
 
-export const fireDb = firebase.firestore();
+export const fireDb = firebase.database();

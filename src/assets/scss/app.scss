@@ -1,0 +1,57 @@
+@import 'materialize-css/dist/css/materialize.min.css';
+@import url('https://fonts.googleapis.com/css2?family=Nerko+One&display=swap');
+
+@import './home';
+@import './history-register';
+
+#app.show {
+  opacity: 0;
+}
+
+.sortable-ghost { opacity: 0 !important; }
+
+* {
+  font-family: 'Nerko One', cursive
+}
+
+input::placeholder {
+  font-family: 'Nerko One', cursive;
+}
+
+body {
+  background-image: url('../img/bg1.png');
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+.collapsible-body {
+  background: #f4f4f4;
+}
+
+#toast-container {
+  min-width: 10%;
+  top: 0%;
+  right: 50%;
+  transform: translateX(50%) translateY(50%);
+}
+
+@media(max-width:576px) {
+  .modal {
+      top: 0 !important;
+      max-height: 100vh;
+      height: 100vh;
+      width: 100vw;
+  }
+  .modal-footer {
+      position: fixed;
+      bottom: 0;
+  }
+
+  #btn-wrapper {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+  }
+}

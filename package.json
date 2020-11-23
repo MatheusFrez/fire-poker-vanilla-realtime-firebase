@@ -55,7 +55,11 @@
     "last 3 safari versions"
   ],
   "dependencies": {
+    "@types/materialize-css": "^1.0.8",
+    "@types/sortablejs": "^1.10.6",
     "firebase": "^8.1.1",
+    "materialize-css": "^1.0.0-rc.2",
+    "sortablejs": "^1.12.0",
     "rxjs": "^6.6.3"
   }
 }

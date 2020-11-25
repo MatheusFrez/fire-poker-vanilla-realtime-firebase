@@ -4,7 +4,9 @@ import { Observable } from 'rxjs';
 
 export default class RoomSingletonService {
   private static instance: RoomSingletonService;
-  public collection: string = 'room'
+
+  public collection: string = 'room';
+
   private constructor () {}
 
   public static getInstance () {

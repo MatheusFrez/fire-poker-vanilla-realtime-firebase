@@ -46,7 +46,7 @@ export default class Router {
 
   private bindLoad (): void {
     window.addEventListener('load', () => {
-      const path = location.pathname;
+      const path = `${location.pathname}${location.search}`;
       this.push(path);
     });
   }

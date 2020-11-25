@@ -23,17 +23,11 @@ body {
   background-position: center;
   background-size: cover;
   background-attachment: fixed;
+  backdrop-filter: brightness(0.6);
 }
 
 .collapsible-body {
   background: #f4f4f4;
-}
-
-#toast-container {
-  min-width: 10%;
-  top: 0%;
-  right: 50%;
-  transform: translateX(50%) translateY(50%);
 }
 
 @media(max-width:576px) {

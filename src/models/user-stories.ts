@@ -1,6 +1,6 @@
 import Vote from './vote';
 
-export default class UserStories {
+export default class UserStory {
   public id?: string;
   public description: string;
   public name: string;
@@ -10,14 +10,14 @@ export default class UserStories {
 
   constructor (params: {
     id?: string,
-    role: string,
     name: string,
-    order: number,
+    description: string;
+    order?: number,
     result?: number,
     votes?: Array<Vote>
   }) {
     this.id = params.id;
-    this.description = params.role;
+    this.description = params.description;
     this.name = params.name;
     this.order = params.order;
     this.result = params.result;

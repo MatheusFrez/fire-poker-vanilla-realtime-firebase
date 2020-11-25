@@ -21,6 +21,8 @@
   },
   "homepage": "https://gitlab.com/thiagodp/pis-2020-1-grupo4b#readme",
   "devDependencies": {
+    "@types/materialize-css": "^1.0.8",
+    "@types/sortablejs": "^1.10.6",
     "@typescript-eslint/eslint-plugin": "^4.8.1",
     "@typescript-eslint/parser": "^4.8.1",
     "eslint": "^7.13.0",
@@ -54,10 +56,8 @@
     "last 3 safari versions"
   ],
   "dependencies": {
-    "@types/materialize-css": "^1.0.8",
-    "@types/sortablejs": "^1.10.6",
     "firebase": "^8.1.1",
-    "materialize-css": "^1.0.0-rc.2",
+    "materialize-css": "^1.0.0",
     "sortablejs": "^1.12.0"
   }
 }

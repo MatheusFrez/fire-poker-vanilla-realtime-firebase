@@ -1,152 +1,122 @@
 import HistoryRegisterView from '../views/history-register.view';
 import Controller from './controller';
-import { Modal, updateTextFields, Collapsible } from 'materialize-css';
 import router from '../router/index';
-
-export interface History {
-  id: number,
-  name: string,
-  description: string,
-  order?: number
-}
+import UserStory from '../models/user-stories';
+import toast from '../plugins/toast';
 
 export default class HistoryRegisterController implements Controller {
   private view: HistoryRegisterView;
-  private arrHistories: History[];
-  private idToEdit: number;
+  private userStories: UserStory[];
   private playerName: string;
   private roomName: string
 
   constructor () {
     this.view = new HistoryRegisterView();
-    this.arrHistories = [];
+    this.userStories = [];
     const urlParams = new URLSearchParams(window.location.search);
     this.playerName = urlParams.get('name');
     this.roomName = urlParams.get('room');
     if (!this.playerName || !this.roomName) {
       router.push('/');
-      document.location.reload();
     }
   }
 
   public init (): void {
     this.view.render();
-    this.view.onClickAdd();
-    this.view.onClickConfirmationModal(this.HandleInsertHistory.bind(this));
-    this.view.onClickConfirmation(this.createRoom.bind(this));
+    this.view.onPutStory(this.putUserStory.bind(this));
+    this.view.onConfirme(this.handleCreateRoom.bind(this));
+    this.view.onOrderChange(this.onOrderChange.bind(this));
+    this.listUserStories();
   }
 
-  private HandleInsertHistory (id?: number): void {
-    const inputNameHistory = (document.getElementById('input_name_history') as HTMLInputElement).value;
-    const inputRole = (document.getElementById('input_role') as HTMLInputElement).value;
-    const inputFunctionality = (document.getElementById('input_functionality') as HTMLInputElement).value;
-    const inputBusinessObjective = (document.getElementById('input_business_objective') as HTMLInputElement).value;
+  private onOrderChange (oldIndex: number, newIndex: number): void {
+    const userStory = this.userStories[oldIndex];
+    this.userStories.splice(oldIndex, 1);
+    this.userStories.splice(newIndex, 0, userStory);
+    this.listUserStories();
+  }
 
-    if (!inputNameHistory || !inputRole || !inputBusinessObjective || !inputFunctionality) {
+  private listUserStories (): void {
+    this.view.listUserStories(
+      this.userStories,
+      this.removeUserStory.bind(this),
+    );
+  }
+
+  private putUserStory (userStory?: UserStory): void {
+    const name = this.view.name;
+    const description = this.view.description;
+    const isValid = this.validate(name, description);
+    if (!isValid) {
       return;
     }
-
-    const result = ['Como um ' + inputRole, 'Desejo ' + inputFunctionality, 'Para ' + inputBusinessObjective].join(' ');
-
-    if (this.arrHistories.find(history => history.id == this.idToEdit)) {
-      this.updateHistory({
-        name: inputNameHistory,
-        description: result,
-      }, this.idToEdit);
-      this.idToEdit = null;
-    } else {
-      const history = {
-        id: this.arrHistories.length,
-        name: inputNameHistory,
-        description: result,
-      };
-      this.arrHistories.push(history);
-      this.generateCollapsible(history);
-    }
-
-    this.clearInputs();
-    updateTextFields();
-  }
-
-  private clearInputs ():void {
-    (document.getElementById('form') as HTMLFormElement).reset();
-    document.getElementById('input_functionality').textContent = '';
-    document.getElementById('input_business_objective').textContent = '';
-  }
-
-  private fillForm (title:string, description: string): void {
-    (document.getElementById('input_name_history') as HTMLInputElement).value = title;
-    (document.getElementById('input_role') as HTMLInputElement).value = description[0];
-    document.getElementById('input_functionality').textContent = description[1];
-    document.getElementById('input_business_objective').textContent = description[2];
-    updateTextFields();
-  }
-
-  private updateHistory ({ name, description }:Partial<History>, id: number): void {
-    const history = this.arrHistories.find(hist => hist.id == id);
-    const index = this.arrHistories.findIndex(hist => hist.id == id);
-    this.arrHistories[index] = Object.assign({}, history, {
-      description,
+    const index = this.findIndex(userStory);
+    const newUserStory = new UserStory({
       name,
+      description,
     });
-
-    const element: Element = document.querySelector(`[collapse-id=c_${id}]`);
-    const spans = element.querySelectorAll('span');
-    spans[0].textContent = name;
-    spans[1].textContent = description;
+    if (index >= 0) {
+      this.userStories.splice(index, 1, newUserStory);
+    } else {
+      this.userStories.push(newUserStory);
+    }
+    this.listUserStories();
+    this.view.closeForm();
   }
 
-  private generateCollapsible ({ name, description, id }: History): void {
-    const collapseElement = document.getElementById('collapsible');
-    collapseElement.insertAdjacentHTML('afterbegin', `
-      <li collapse-id=c_${id}>
-        <div class="collapsible-header">
-          <i class="material-icons">filter_drama</i>
-          <span>${name}</span>
-          <button id="btn-edit" class="waves-effect waves-circle waves-light btn-floating secondary-content">
-            <i class="material-icons">create</i>
-          </button>
-          <button id="btn-remove" class="waves-effect waves-circle waves-light btn-floating secondary-content">
-            <i class="material-icons">close</i>
-          </button>
-        </div>
-        <div class="collapsible-body"><span>${description}</span></div>
-      </li>
-    `);
-
-    document.getElementById('btn-edit').addEventListener('click', (e: any) => {
-      e.stopPropagation();
-      const parent = e.currentTarget.parentElement;
-      const title = parent.querySelector('span').textContent;
-      let description = parent.parentElement.querySelector('.collapsible-body span').textContent;
-      description = description.split(/Como um|Desejo|Para/).slice(1);
-      this.fillForm(title, description);
-      this.idToEdit = id;
-      Modal.getInstance(document.getElementById('modal-register')).open();
-    });
-
-    document.getElementById('btn-remove').addEventListener('click', (e: any) => {
-      e.stopPropagation();
-      document.querySelector(`[collapse-id=c_${id}]`).remove();
-      this.arrHistories.slice(this.arrHistories.findIndex(elem => elem.id == id), 1);
-    });
-
-    Collapsible.init(document.querySelectorAll('.collapsible.expandable'), { accordion: false });
+  private removeUserStory (userStory: UserStory): void {
+    const index: number = this.findIndex(userStory);
+    if (index >= 0) {
+      this.userStories.splice(index, 1);
+      this.listUserStories();
+    }
   }
 
-  private createRoom (): void {
-    this.arrHistories = this.OrderCollapsablesArr();
-    // Criar sala aqui
+  private findIndex (userStory: UserStory): number {
+    return this.userStories.findIndex(
+      (value) => value === userStory,
+    );
   }
 
-  private OrderCollapsablesArr (): any {
-    return Array.from(document.querySelectorAll('.collapsible li'))
-      .map((element: Element, index: number) => {
-        const id = element.getAttribute('collapse-id').split('_')[1];
-        return {
-          ...this.arrHistories.find(elem => elem.id == Number(id)),
-          order: index,
-        };
-      });
+  private validate (
+    userStoryName: string,
+    description: string,
+  ): boolean {
+    const isValidStoryName = this.validateUserStoryName(userStoryName);
+    const isValidStoryDescription = this.validateUserStoryDescription(description);
+    return isValidStoryName && isValidStoryDescription;
+  }
+
+  private validateUserStoryName (userStoryName: string): boolean {
+    if (!userStoryName) {
+      this.view.showNameError('O nome é obrigatório.');
+      return false;
+    }
+    if (userStoryName.length < 3) {
+      this.view.showNameError('O nome deve conter no minímo 3 caracteres.');
+      return false;
+    }
+    this.view.clearNameError();
+    return true;
+  }
+
+  private validateUserStoryDescription (description: string): boolean {
+    if (!description) {
+      this.view.showDescriptionError('A descrição é obrigatória.');
+      return false;
+    }
+    if (description.length < 10) {
+      this.view.showDescriptionError('A descrição deve conter no minímo 10 caracteres.');
+      return false;
+    }
+    this.view.clearDescriptionError();
+    return true;
+  }
+
+  private handleCreateRoom (): void {
+    if (!this.userStories.length) {
+      toast('Adicione as histórias de usuário!');
+    }
+    // TODO: Criar sala aqui
   }
 }

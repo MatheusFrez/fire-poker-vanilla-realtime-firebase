@@ -1,13 +1,4 @@
 #home {
-
-  input {
-    color: white;
-  }
-
-  label {
-    color: white !important;
-  }
-
   .container {
     align-items: center;
     justify-content: center;
@@ -15,17 +6,35 @@
     height: 100vh;
   }
 
+  .card-panel {
+    width: 100%;
+    max-width: 500px;
+    min-height: 370px;
+    display: flex;
+    flex-direction: column;
+  }
+
   #card-title {
-    display:flex;
+    display: flex;
     justify-content: center;
     align-items: center;
+
     h4 {
-      margin-top:0;
-      color:white;
+      margin-top: 0;
+      font-weight: bold;
     }
   }
 
-  .d-none {
-    display: none;
+  .btn-actions {
+    margin-top: auto;
+    text-align: right;
+
+    .btn:last-child {
+      margin-left: 20px;
+    }
+
+    .btn {
+      margin-top: 10px;
+    }
   }
 }

@@ -18,7 +18,7 @@ const router = new Router({
         .init(id);
     },
   }, {
-    path: /^\/room\/register\/histories\/?(\?.*)?$/,
+    path: /^\/room\/register\/?/,
     callback: () => {
       new HistoryRegisterView()
         .init();

@@ -1,16 +1,78 @@
 #history-register {
+  #modal-register {
+    max-width: 530px;
+  }
 
-  #btn-edit {
+  .container {
+    justify-content: center;
+    display: flex;
+    height: 100vh;
+  }
+
+  .card-panel {
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  h4 {
+    margin: 0;
+    margin-top: 3px;
+    font-size: 1.8rem;
+  }
+
+  .empty {
+    padding: 40px;
+  }
+
+  .btn-floating {
+    width: 35px;
+    height: 35px;
+
+    i {
+      line-height: 35px;
+    }
+  }
+
+  .btn-edit {
     margin-left: auto !important;
-    margin-right: 10px;
+  }
+
+  .btn-actions {
+    margin-top: auto;
+    text-align: right;
   }
 
   #btn-confirmation {
-    margin-left: auto;
+    margin-left: 20px;
   }
 
-  #btn-wrapper, #btn-confirmation-div {
-    display: flex;
-    align-items: center;
+  .materialize-textarea {
+    min-height: 90px;
+    line-height: 1.5;
   }
+
+  .order {
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-right: 10px;
+  }
+
+  .collapsible-header {
+    padding: 10px;
+
+    span {
+      line-height: 2;
+    }
+
+    i {
+      margin: 0;
+    }
+  }
+}
+
+.collapsible.popout > li {
+  margin: 0 10px;
+  box-shadow: none;
 }

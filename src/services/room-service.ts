@@ -16,8 +16,12 @@ export default class RoomSingletonService {
   }
 
   public async findById (id: string): Promise<Room> {
-    return fireDb.ref(`${this.collection}/${id}`).get()
-      .then(res => new Room(res.val() as any)); // TO DO REVER ESSE as any
+    const response = await fireDb.ref(`${this.collection}/${id}`).get();
+    const value = response.val();
+    if (!value) {
+      return null;
+    }
+    return new Room(value);
   }
 
   public async remove (id: string): Promise<void> {

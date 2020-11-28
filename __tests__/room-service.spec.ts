@@ -1,3 +1,5 @@
+import { mixedDeck } from '../src/common/decks';
+import { RoleType } from '../src/models/role-type';
 import Room from '../src/models/room';
 import RoomSingletonService from '../src/services/room-service';
 
@@ -9,10 +11,11 @@ describe('Tests about collection of room on database', () => {
       identifier: 'teste-room-jest',
       settings: {
         timeout: 200,
+        deck: mixedDeck,
       },
       players: [{
         name: 'doidao',
-        role: 'dasdasdas',
+        role: RoleType.ADMIN,
       }],
       title: 'teste',
       userStories: [],
@@ -29,10 +32,11 @@ describe('Tests about collection of room on database', () => {
       identifier: 'teste-room-jest-updated',
       settings: {
         timeout: 200,
+        deck: mixedDeck,
       },
       players: [{
         name: 'doidao',
-        role: 'dasdasdas',
+        role: RoleType.ADMIN,
       }],
       title: 'teste',
       userStories: [],
@@ -46,6 +50,6 @@ describe('Tests about collection of room on database', () => {
   it('Should remove a room from database.', async () => {
     await roomService.remove('test-room-1');
     const room: Room = await roomService.findById('test-room-1');
-    expect(room.identifier).toBeUndefined();
+    expect(room).toBeNull();
   });
 });

@@ -38,6 +38,11 @@ export default class HomeView extends View {
       .addEventListener('click', callback);
   }
 
+  public onJoinRoom (callback: any): void {
+    document.getElementById('btn-join')
+      .addEventListener('click', callback);
+  }
+
   public showPlayerError (error: string): void {
     this.playerErrorElement.innerText = error;
     this.playerInput.classList.add('invalid');

@@ -24,6 +24,17 @@ export default class RoomSingletonService {
     return new Room(value);
   }
 
+  public async list (): Promise<Array<Room>> {
+    return fireDb.ref(`${this.collection}`).get()
+      .then(res => {
+        const array: Array<Room> = [];
+        res.forEach(dado => {
+          array.push(new Room(dado.val()));
+        });
+        return array;
+      });
+  }
+
   public async remove (id: string): Promise<void> {
     return fireDb.ref(`${this.collection}/${id}`)
       .remove();

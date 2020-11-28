@@ -1,0 +1,290 @@
+$itemsCount: 6;
+
+ul.cards{
+  width: 660px; margin: 0 auto 20px;
+  height: 300px;
+  list-style-type: none;
+  position: relative;
+  padding: 20px 0;
+  cursor: pointer;
+  li.title{ margin: 0 0 20px;
+    h2{ font-weight: 700; }
+  }
+  li.card{
+    background: #FFF; overflow: hidden;
+    height: 200px; width: 200px;
+    border-radius: 10px;
+    position: absolute; left: 0px;
+    box-shadow: 1px 2px 2px 0 #aaa;
+    transition: all 1s cubic-bezier(.63,.15,.03,1.12);
+    img{
+       max-width: 100%; height: auto;
+    }
+    div.content{
+      padding: 5px 10px;
+    }
+
+    &.card-1{
+      z-index: 10; transform: rotateZ(-2deg);
+    }
+    &.card-2{
+      z-index: 9; transform: rotateZ(-7deg);
+      transition-delay: 0.05s;
+    }
+    &.card-3{
+      z-index: 8; transform: rotateZ(5deg);
+      transition-delay: 0.1s;
+    }
+  }
+
+  &.transition{
+    li.card{
+      transform: rotateZ(0deg);
+      &.card-1{
+        left: 440px;
+      }
+      &.card-2{
+        left: 220px;
+      }
+    }
+  }
+}
+
+ul.card-stacks{
+  width: 550px;
+  list-style-type: none; margin: 0 auto 20px; padding: 0;
+  position: relative;
+  cursor: pointer;
+  height: 100vh;
+  li.title{ margin: 0 0 20px;
+    h2{ font-weight: 700; }
+  }
+  li.stack{
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    transition: all 0.4s cubic-bezier(.63,.15,.03,1.02);
+    ul.cards-down{
+      position: relative;
+      margin: 0 0 20px; padding: 20px;
+      list-style-type: none; margin: 0; padding: 0;
+      li.card{
+        transition: all 0.4s cubic-bezier(.63,.15,.03,1.22);
+        left: 0px;
+        transition-delay: 0.4s;
+        background: #FFF; overflow: hidden;
+        height: fit-content; width: fit-content;
+        border-radius: 10px;
+        position: absolute; top: 0px;
+        box-shadow: 1px 2px 2px 0 #aaa;
+        img{
+           max-width: 100%; height: auto;
+        }
+        div.content{
+          padding: 5px 10px;
+        }
+
+        &.card-1{
+          z-index: 10; transform: rotateZ(-2deg);
+        }
+        &.card-2{
+          z-index: 9; transform: rotateZ(-7deg);
+        }
+        &.card-3{
+          z-index: 8; transform: rotateZ(5deg);
+        }
+      }
+    }
+  }
+
+  &.transition{
+    li.stack{
+      &.stack-1{ left: 0px; }
+      &.stack-2{ left: 25%; }
+      &.stack-3{ left: 50%; }
+      &.stack-4{ left: 75%; }
+      ul.cards-down{
+        li.card{
+          transform: rotateZ(0deg);
+          &.card-1{
+            top: 400px;
+          }
+          &.card-2{
+            top: 200px;
+          }
+          &.card-3{
+            top: 600px;
+          }
+          &.card-4{
+            left: 70px;
+          }
+        }
+      }
+    }
+  }
+
+  #counter-vote {
+    position: absolute;
+    bottom: 0;
+    left: 15%;
+  }
+}
+.card {
+  margin: 0;
+  background: #eeeae7;
+  border-radius: 16px;
+  height: 45vw;
+  max-height: 180px;
+  max-width: 120px;
+  min-height: 150px;
+  min-width: 50px;
+  transition: all ease-in 0.3s;
+  width: 32vw;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.card-card1 {
+  box-shadow:
+    0 1px 2px 0 rgba(151,150,146,0.4),
+    0 4px 12px 0 rgba(151,150,146,0.4);
+  color: #635f5c;
+}
+.card-card2 {
+  color: #a68385;
+  .card__value {
+    transform: translatex(-2px);
+  }
+  .card__suit {
+    margin-top: 0.8rem;
+  }
+}
+
+.card-card3 {
+  color: #635f5c;
+  .card__suit {
+    margin-top: 0.8rem;
+  }
+}
+.card-card4 {
+  color: #a68385;
+  .card__suit {
+    margin-top: 0.7rem;
+  }
+}
+
+.card__face {
+  top: 0;
+  position: absolute;
+}
+.card__face--btm {
+  bottom: 0;
+  right: 0;
+  transform: rotate(180deg);
+}
+.card__value {
+  display: block;
+  text-align: center;
+  width: 22px;
+}
+.card__suit {
+  display: block;
+  margin-top: 0.5rem;
+}
+
+.card__value__center {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  align-items: center;
+  margin: 0;
+}
+
+.stack-center {
+  left: 50% !important;
+  top: 40% !important;
+}
+
+//-------------------///
+
+.cards-history-container {
+  position: relative;
+  z-index: 1;
+  width: 500px;
+  height: calc(100vh - 205px);
+  margin: 0 auto;
+  display: flex;
+  justify-self: center;
+  align-items: center;
+}
+
+.card-history {
+  position: absolute;
+  width: 500px;
+  height: 300px;
+  background-color: #EDEBD7;
+  border: 1px solid #423E37;
+  box-shadow: 9px 11px 3px 0px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  padding: 40px;
+  transition: transform 0.3s, opacity 0.2s;
+
+  &.hidden {
+    z-index: 100;
+    background-color: #fff;
+    color: #fff;
+    opacity: 0;
+
+    transition: color 0.5s, background-color 0.5s, transform 1s, opacity 0.2s 0.4s;
+
+    h1 {
+      color: #fff;
+
+      transition: color 0.5s
+    }
+
+    @for $i from 1 through $itemsCount {
+      &:nth-of-type(#{$i}) {
+        transform: rotate(random(100) - 100 + deg) translateX((random(1) + 100) * 1%) translateY(random(60) * -1%) scale(random(10)*0.1) skewX(random(12) + deg) skewY(random(12) + deg);
+      }
+    }
+
+  }
+
+  @for $i from 1 through $itemsCount {
+    $zIndexStartValue: $itemsCount + 1; // we don't want an item with 0 index
+    $xValue: ($i - 1) * 10px; // we want to start translating from 0
+    $yValue: ($i - 1) * 10px; // we want to start translating from 0
+    $zIndexValue: $itemsCount - $i; // reverse the z-index, so first item is on top
+
+    &:nth-of-type(#{$i}) {
+      z-index: $zIndexValue;
+      transform: translateX(#{$xValue}) translateY(#{$yValue});
+    }
+  }
+}
+
+// ---- /// MEDIAS
+
+@media(max-width:1500px) {
+
+  .d-none {
+    display: none;
+  }
+
+  .wrapper-mobile {
+    display: grid !important;
+  }
+
+  .cards-container-wrapper .card {
+    margin: 2px;
+  }
+}
+
+@media(min-width:1000px)  {
+
+}

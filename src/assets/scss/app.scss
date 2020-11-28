@@ -3,7 +3,10 @@
 
 @import './home';
 @import './history-register';
+@import './room';
+
 @import './loader';
+@import './cards';
 
 #app.show {
   opacity: 0;
@@ -25,15 +28,16 @@ input::placeholder {
 
 html, body {
   height: 100%;
+  overflow: hidden;
 }
 
-body {
-  background-image: url('../img/bg1.png');
-  background-position: center;
-  background-size: cover;
-  background-attachment: fixed;
-  backdrop-filter: brightness(0.6);
-}
+// body {
+//   background-image: url('../img/bg1.png');
+//   background-position: center;
+//   background-size: cover;
+//   background-attachment: fixed;
+//   backdrop-filter: brightness(0.6);
+// }
 
 .collapsible-body {
   background: #f4f4f4;

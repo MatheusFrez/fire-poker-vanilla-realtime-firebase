@@ -3,7 +3,10 @@
 
 @import './home';
 @import './history-register';
+@import './room';
+
 @import './loader';
+@import './cards';
 
 #app.show {
   opacity: 0;
@@ -25,6 +28,7 @@ input::placeholder {
 
 html, body {
   height: 100%;
+  overflow: hidden;
 }
 
 body {

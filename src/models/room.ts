@@ -1,6 +1,7 @@
+import randomKey from '../common/random-key';
 import Player from './player';
 import Settings from './settings';
-import UserStories from './user-stories';
+import UserStories from './user-story';
 
 export default class Room {
   public id: string;
@@ -12,20 +13,20 @@ export default class Room {
   public userStories: Array<UserStories>;
 
   constructor (params: {
-    id: string,
+    id?: string,
     title: string,
-    identifier: string,
+    identifier?: string,
     finished: boolean,
     settings?: Settings,
     players: Array<Player>,
     userStories: Array<UserStories>
   }) {
-    this.id = params?.id;
-    this.title = params?.title;
-    this.identifier = params?.identifier;
-    this.finished = params?.finished;
-    this.settings = params?.settings;
-    this.players = params?.players;
-    this.userStories = params?.userStories;
+    this.id = params.id || randomKey(params.title);
+    this.title = params.title;
+    this.identifier = params.identifier;
+    this.finished = params.finished;
+    this.settings = params.settings || new Settings();
+    this.players = params.players;
+    this.userStories = params.userStories;
   }
 }

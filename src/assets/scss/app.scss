@@ -3,6 +3,7 @@
 
 @import './home';
 @import './history-register';
+@import './loader';
 
 #app.show {
   opacity: 0;
@@ -11,11 +12,19 @@
 .sortable-ghost { opacity: 0 !important; }
 
 * {
-  font-family: 'Nerko One', cursive
+  font-family: 'Nerko One', cursive;
+}
+
+button, input, optgroup, select, textarea {
+  font-family: 'Nerko One', cursive;
 }
 
 input::placeholder {
   font-family: 'Nerko One', cursive;
+}
+
+html, body {
+  height: 100%;
 }
 
 body {

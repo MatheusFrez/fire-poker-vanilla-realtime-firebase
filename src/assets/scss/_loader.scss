@@ -1,0 +1,223 @@
+.loading {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.75);
+  position: fixed;
+  top:0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  z-index: 10;
+
+  .loadingItem {
+    box-sizing: border-box;
+    padding: 30px;
+    text-align: center;
+
+    %card {
+      width: 60px;
+      height: 85px;
+      top: 30px;
+      left: -10px;
+      border-radius: 5px;
+      border: 2px solid #000;
+      box-sizing: border-box;
+      animation-duration: 3s;
+      animation-iteration-count: infinite;
+      animation-direction: alternate;
+    }
+
+    .spinner {
+      @extend %card;
+      position: relative;
+      display: inline-block;
+      margin-bottom: 80px;
+      transform-style: preserve-3d;
+      background: #e53935;
+      animation-name: card-back;
+
+      &:before, &:after {
+        content: '';
+        position: absolute;
+        @extend %card;
+        left: -3px;
+        top: -3px;
+      }
+
+      &:before {
+        background: #43a047;
+        animation-name: card-middle;
+      }
+
+      &:after{
+        background: #1565c0;
+        animation-name: card-front;
+      }
+    }
+
+    .blinking {
+      font-size: 1.1rem;
+      font-weight: 500;
+      letter-spacing: 1px;
+      white-space: pre;
+      display: flex;
+      align-items: flex-end;
+
+      span {
+        margin-right: 20px;
+      }
+    }
+  }
+}
+
+$back-Z: -2px;
+$middle-Z: 0px;
+$front-Z: 2px;
+
+@keyframes card-back {
+  0% {
+    transform: translate3d(0px, 0, $back-Z) scale3d(1, 1, 1);
+  }
+
+  12.4% {
+    transform: translate3d(-50px, 0, $back-Z) scale3d(1, 1, 1);
+  }
+
+  12.5% {
+    transform: translate3d(-50px, 0, $middle-Z) scale3d(1, 1, 1);
+  }
+
+  25% {
+    transform: translate3d(10px, 10px, $middle-Z) scale3d(1.1, 1.1, 1);
+  }
+
+  37.4% {
+    transform: translate3d(10px, 10px, $middle-Z) scale3d(1.1, 1.1, 1);
+  }
+
+  37.5% {
+    transform: translate3d(10px, 10px, $front-Z) scale3d(1.1, 1.1, 1);
+  }
+
+  50% {
+    transform: translate3d(20px, 20px, $front-Z) scale3d(1.2, 1.2, 1);
+  }
+
+  62.4% {
+    transform: translate3d(-50px, 20px, $front-Z) scale3d(1.2, 1.2, 1);
+  }
+
+  62.5% {
+    transform: translate3d(-50px,20px,$middle-Z) scale3d(1.2, 1.2, 1);
+  }
+
+  75% {
+    transform: translate3d(10px, 10px, $middle-Z) scale3d(1.1, 1.1, 1);
+  }
+
+  82.4% {
+    transform: translate3d(10px, 10px, $middle-Z) scale3d(1.1, 1.1, 1);
+  }
+
+  82.5% {
+    transform: translate3d(10px, 10px, $back-Z) scale3d(1.1, 1.1, 1);
+  }
+
+  100% {
+    transform: translate3d(0px, 0px, $back-Z) scale3d(1, 1, 1);
+  }
+}
+@keyframes card-middle {
+  0% {
+    transform: translate3d(10px, 10px, $middle-Z) scale3d(1.1, 1.1, 1);
+  }
+
+  12.4% {
+    transform: translate3d(60px, 10px, $middle-Z) scale3d(1.1, 1.1, 1);
+  }
+
+  12.5% {
+    transform: translate3d(60px, 10px, $back-Z) scale3d(1.1, 1.1, 1);
+  }
+
+  25% {
+    transform: translate3d(-10px, -10px, $back-Z) scale3d(0.9, 0.9, 1);
+  }
+
+  37.5% {
+    transform: translate3d(-10px, -10px, $back-Z) scale3d(0.9, 0.9, 1);
+  }
+
+  50% {
+    transform: translate3d(-20px, -20px, $back-Z) scale3d(0.8, 0.8, 1);
+  }
+
+  62.5% {
+    transform: translate3d(50px, -20px, $back-Z) scale3d(0.8, 0.8, 1);
+  }
+
+  75% {
+    transform: translate3d(-10px, -10px, $back-Z) scale3d(0.9, 0.9, 1);
+  }
+
+  82.4% {
+    transform: translate3d(60px, -10px, $back-Z) scale3d(1, 1, 1);
+  }
+
+  82.5% {
+    transform: translate3d(60px, -10px, $middle-Z) scale3d(1, 1, 1);
+  }
+
+  100% {
+    transform: translate3d(10px, 10px, $middle-Z) scale3d(1.1, 1.1, 1);
+  }
+}
+
+@keyframes card-front {
+  0% {
+    transform: translate3d(20px, 20px, $front-Z) scale3d(1.2, 1.2, 1);
+  }
+
+  12.5%{
+    transform: translate3d(70px, 20px, $front-Z) scale3d(1.2, 1.2, 1);
+  }
+
+  25% {
+    transform: translate3d(10px, 10px, $front-Z) scale3d(1.1, 1.1, 1);
+  }
+
+  37.4% {
+    transform: translate3d(60px, 0px, $front-Z) scale3d(1, 1, 1);
+  }
+
+  37.5% {
+    transform: translate3d(60px, 0px, $back-Z) scale3d(1, 1, 1);
+  }
+
+  50% {
+    transform: translate3d(-10px, -10px, $back-Z) scale3d(0.9, 0.9, 1);
+  }
+
+  62.4% {
+    transform: translate3d(60px, -10px, $middle-Z) scale3d(0.9, 0.9, 1);
+  }
+
+  62.5% {
+    transform: translate3d(60px, -10px, $front-Z) scale3d(0.9, 0.9, 1);
+  }
+
+  75% {
+    transform: translate3d(10px, 10px, $front-Z) scale3d(1.1, 1.1, 1);
+  }
+
+  82.5% {
+    transform: translate3d(10px, 10px, $front-Z) scale3d(1.1, 1.1, 1);
+  }
+
+  100% {
+    transform: translate3d(20px, 20px, $front-Z) scale3d(1.2, 1.2, 1);
+  }
+}

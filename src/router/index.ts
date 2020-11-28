@@ -12,16 +12,16 @@ const router = new Router({
         .init();
     },
   }, {
-    path: /^\/room\/(\d+)\/?$/,
-    callback: (id) => {
-      new RoomController()
-        .init(id);
-    },
-  }, {
     path: /^\/room\/register\/?/,
     callback: () => {
       new HistoryRegisterView()
         .init();
+    },
+  }, {
+    path: /^\/room\/([0-9-A-z-]+)\/?$/,
+    callback: (id) => {
+      new RoomController()
+        .init(id);
     },
   }],
   notFound: () => {

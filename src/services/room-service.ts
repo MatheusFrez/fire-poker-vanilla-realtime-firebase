@@ -1,6 +1,7 @@
 import Room from '../models/room';
 import { fireDb } from '../plugins/firebase';
 import { Observable } from 'rxjs';
+import toSimpleJson from '../common/simple-json';
 
 export default class RoomSingletonService {
   private static instance: RoomSingletonService;
@@ -26,7 +27,7 @@ export default class RoomSingletonService {
 
   public async upsert (room: Room): Promise<Room> {
     return fireDb.ref(`${this.collection}/${room.id}`)
-      .set(room);
+      .set(toSimpleJson(room));
   }
 
   public listenCollection (id: string, field: string): Observable<Room> {

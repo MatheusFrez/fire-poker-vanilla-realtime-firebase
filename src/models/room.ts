@@ -29,4 +29,5 @@ export default class Room {
     this.players = params.players;
     this.userStories = params.userStories;
   }
+  // todas as fallbacks acimas foram colocadas pois o firebase não aceita Nenhum atributo undefined em seu banco
 }

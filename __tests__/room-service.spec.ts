@@ -52,4 +52,9 @@ describe('Tests about collection of room on database', () => {
     const room: Room = await roomService.findById('test-room-1');
     expect(room).toBeNull();
   });
+
+  it('Should list roomn from database.', async () => {
+    const rooms: Array<Room> = await roomService.list();
+    expect(rooms.length).toBeGreaterThan(1);
+  });
 });

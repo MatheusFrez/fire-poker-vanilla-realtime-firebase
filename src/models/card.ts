@@ -5,8 +5,8 @@ export default class Card {
 
   constructor (params: {
     symbol: string,
-    description: string,
-    value: number
+    description?: string,
+    value?: number,
   }) {
     this.symbol = params.symbol;
     this.description = params.description;

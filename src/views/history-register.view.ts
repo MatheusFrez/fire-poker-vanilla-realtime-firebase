@@ -2,7 +2,8 @@ import { Collapsible, Modal, updateTextFields } from 'materialize-css';
 import Sortable from 'sortablejs';
 
 import View from './view';
-import UserStory from '../models/user-stories';
+import UserStory from '../models/user-story';
+import loader from '../components/loader';
 
 export default class HistoryRegisterView extends View {
   private userStoryToEdit: UserStory;
@@ -114,7 +115,7 @@ export default class HistoryRegisterView extends View {
           </button>
         </div>
         <div class="collapsible-body">
-          <span>${userStory.description}</span>
+          <pre>${userStory.description}</pre>
         </div>
       `;
       element.querySelector('.btn-edit').addEventListener('click', (event: any) => {
@@ -131,6 +132,14 @@ export default class HistoryRegisterView extends View {
       });
       collapseElement.appendChild(element);
     });
+  }
+
+  public showLoader (message: string): void {
+    document.body.insertAdjacentHTML('afterbegin', loader(message));
+  }
+
+  public hideLoader (): void {
+    document.querySelector('.loading').remove();
   }
 
   public closeForm (): void {

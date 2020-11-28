@@ -1,6 +1,7 @@
 import Room from '../models/room';
 import { fireDb } from '../plugins/firebase';
 import { Observable } from 'rxjs';
+import toSimpleJson from '../common/simple-json';
 
 export default class RoomSingletonService {
   private static instance: RoomSingletonService;
@@ -15,8 +16,12 @@ export default class RoomSingletonService {
   }
 
   public async findById (id: string): Promise<Room> {
-    return fireDb.ref(`${this.collection}/${id}`).get()
-      .then(res => new Room(res.val() as any)); // TO DO REVER ESSE as any
+    const response = await fireDb.ref(`${this.collection}/${id}`).get();
+    const value = response.val();
+    if (!value) {
+      return null;
+    }
+    return new Room(value);
   }
 
   public async remove (id: string): Promise<void> {
@@ -26,7 +31,7 @@ export default class RoomSingletonService {
 
   public async upsert (room: Room): Promise<Room> {
     return fireDb.ref(`${this.collection}/${room.id}`)
-      .set(room);
+      .set(toSimpleJson(room));
   }
 
   public listenCollection (id: string, field: string): Observable<Room> {

@@ -1,5 +1,5 @@
-import firebase from 'firebase';
-import 'firebase/firestore';
+import firebase from 'firebase/app';
+import 'firebase/database';
 
 if (!firebase.apps.length) {
   const firebaseConfig = {
@@ -13,7 +13,6 @@ if (!firebase.apps.length) {
   };
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
-  firebase.firestore().settings({});
 }
 
 export const fireDb = firebase.database();

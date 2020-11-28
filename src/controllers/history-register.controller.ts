@@ -1,8 +1,12 @@
 import HistoryRegisterView from '../views/history-register.view';
 import Controller from './controller';
 import router from '../router/index';
-import UserStory from '../models/user-stories';
-import toast from '../plugins/toast';
+import UserStory from '../models/user-story';
+import RoomSingletonService from '../services/room-service';
+import Room from '../models/room';
+import Player from '../models/player';
+import { RoleType } from '../models/role-type';
+import toast from '../common/toast';
 
 export default class HistoryRegisterController implements Controller {
   private view: HistoryRegisterView;
@@ -113,10 +117,25 @@ export default class HistoryRegisterController implements Controller {
     return true;
   }
 
-  private handleCreateRoom (): void {
+  private async handleCreateRoom (): Promise<void> {
     if (!this.userStories.length) {
       toast('Adicione as histórias de usuário!');
+      return;
     }
-    // TODO: Criar sala aqui
+    const admin = new Player({
+      name: this.playerName,
+      role: RoleType.ADMIN,
+    });
+    const room = new Room({
+      title: this.roomName,
+      finished: false,
+      userStories: this.userStories,
+      players: [admin],
+    });
+    this.view.showLoader('Criando sala...');
+    const roomService = RoomSingletonService.getInstance();
+    await roomService.upsert(room);
+    this.view.hideLoader();
+    router.push(`/room/${room.id}`);
   }
 }

@@ -47,6 +47,7 @@ export default class RoomView extends View {
                       <ul class="cards-down">
                       </ul>
                   </li>
+                  <h3 id="counter-vote"></h3>
               </ul>
               <div class="button-wrapper">
                   <button class="waves-effect waves-light btn" id="btn-confirm-play">CONFIRMAR JOGADA</button>
@@ -65,17 +66,19 @@ export default class RoomView extends View {
       </button>
 
       <ul id='dropdown1' class='dropdown-content'>
-          <li><a href="#!"><span class="material-icons">account_circle</span>Jogadores</a></li>
+          <li><a><span class="material-icons">account_circle</span>Jogadores</a></li>
           <li class="divider" tabindex="-1"></li>
-          <li><a href="#!"><span class="material-icons">note</span>História</a></li>
+          <li><a><span class="material-icons">note</span>História</a></li>
         </ul>
 
       <div class="cards-container-wrapper">
 
       </div>
 
-      <div class="button-wrapper">
-          <button class="waves-effect waves-light btn" id="btn-confirm-play">CONFIRMAR JOGADA</button>
+      <div class="button-wrapper-mobile">
+          <h3 id="counter-vote"></h3>
+        </span>
+          <button class="waves-effect waves-light btn" id="btn-confirm-play-mobile">CONFIRMAR JOGADA</button>
       </div>
   </div>
 </div>
@@ -86,7 +89,7 @@ export default class RoomView extends View {
     Dropdown.init(document.querySelectorAll('.dropdown-trigger'), {});
   }
 
-  public generateCardsDeck (onClick: Function): void {
+  public generateCardsDeck (onClick: Function, onCheck: Function, onDone: Function): void {
     document.querySelectorAll('.stack').forEach((element: Element, index: number) => {
       const li = element.getElementsByTagName('ul')[0];
       mixedDeck.cards.slice(index * 4, (index + 1) * 4).forEach((card: Card, anotherIndex: number) => {
@@ -94,20 +97,28 @@ export default class RoomView extends View {
         li.getElementsByTagName('li')[0].insertAdjacentHTML('afterbegin', cardDeck(card, anotherIndex));
 
         element.querySelector('.card').addEventListener('click', (event: any) => {
-          element.querySelector(`.card-${anotherIndex} .card`).classList.toggle('check');
+          if (!onCheck(card)) {
+            return;
+          }
           onClick(card);
+          element.querySelector(`.card-${anotherIndex} .card`).classList.toggle('check');
+          document.getElementById('counter-vote').innerHTML = onDone().toString();
         });
       });
     });
   }
 
-  public generateCardsDeckMobile (onClick: Function): void {
+  public generateCardsDeckMobile (onClick: Function, onCheck: Function, onDone: Function): void {
     const div = document.querySelector('.wrapper-mobile .cards-container-wrapper');
     mixedDeck.cards.forEach((card: Card, index: number) => {
       div.insertAdjacentHTML('afterbegin', cardDeck(card, index));
       div.querySelector('.card').addEventListener('click', (event: any) => {
-        document.getElementById(`${index}`).classList.toggle('check');
+        if (!onCheck) {
+          return;
+        }
         onClick(card);
+        document.getElementById(`${index}`).classList.toggle('check');
+        document.getElementById('counter-vote').innerHTML = onDone().toString();
       });
     });
   }

@@ -58,8 +58,15 @@ export default class RoomController implements Controller {
 
   public init (id: string): void {
     this.view.render(id);
-    this.view.generateCardsDeck(this.insertVote.bind(this));
-    this.view.generateCardsDeckMobile(this.insertVote.bind(this));
+    this.view.generateCardsDeck(
+      this.insertVote.bind(this),
+      this.validateCards.bind(this),
+      this.getCountVote.bind(this),
+    );
+    this.view.generateCardsDeckMobile(
+      this.insertVote.bind(this),
+      this.validateCards.bind(this),
+      this.getCountVote.bind(this));
     this.view.listPlayers(this.players as Player[]);
     this.view.generateCardsUserHistory(this.histories as UserStory[]);
 
@@ -77,5 +84,17 @@ export default class RoomController implements Controller {
 
   private findIndex (card: Card): number {
     return this.votes.findIndex((value) => value.symbol === card.symbol);
+  }
+
+  private validateCards (card: Card): boolean {
+    return true;
+  }
+
+  public getCountVote (): number | string {
+    return this.hasSpecialCard() ? this.votes[0].symbol : (this.votes.reduce((acc, card) => acc + card.value, 0));
+  }
+
+  private hasSpecialCard (): boolean {
+    return !!this.votes.find((value) => value.description);
   }
 }

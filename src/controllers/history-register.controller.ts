@@ -134,8 +134,20 @@ export default class HistoryRegisterController implements Controller {
     });
     this.view.showLoader('Criando sala...');
     const roomService = RoomSingletonService.getInstance();
+    this.initializeDefaultEvents(admin, room, roomService);
     await roomService.upsert(room);
     this.view.hideLoader();
     router.push(`/room/${room.id}`);
+  }
+
+  private initializeDefaultEvents (admin: Player, room: Room, roomService: RoomSingletonService) {
+    localStorage.setItem('player-id', admin.id);
+    localStorage.setItem('last-room', room.id);
+    const refreshId = setInterval(async () => {
+      const roomToUpdate: Room = await roomService.findById(room.id);
+      if (roomToUpdate.timeRemaining === 1) { clearInterval(refreshId); }
+      roomToUpdate.timeRemaining--;
+      await roomService.upsert(roomToUpdate);
+    }, 1000);
   }
 }

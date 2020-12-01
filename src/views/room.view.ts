@@ -48,6 +48,7 @@ export default class RoomView extends View {
                       </ul>
                   </li>
                   <h3 id="counter-vote"></h3>
+                  <h2 id="time-remaining"></h2>
               </ul>
               <div class="button-wrapper">
                   <button class="waves-effect waves-light btn" id="btn-confirm-play">CONFIRMAR JOGADA</button>
@@ -79,6 +80,7 @@ export default class RoomView extends View {
           <h3 id="counter-vote"></h3>
         </span>
           <button class="waves-effect waves-light btn" id="btn-confirm-play-mobile">CONFIRMAR JOGADA</button>
+          <h2 id="time-remaining"></h2>
       </div>
   </div>
 </div>
@@ -106,6 +108,10 @@ export default class RoomView extends View {
         });
       });
     });
+  }
+
+  public updateTimeReamining (time: string) {
+    document.getElementById('time-remaining').innerHTML = time;
   }
 
   public generateCardsDeckMobile (onClick: Function, onCheck: Function, onDone: Function): void {

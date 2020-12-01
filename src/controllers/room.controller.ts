@@ -1,6 +1,7 @@
 import { Tooltip } from 'materialize-css';
 import Card from '../models/card';
 import Player from '../models/player';
+import Room from '../models/room';
 import UserStory from '../models/user-story';
 import Vote from '../models/vote';
 import RoomSingletonService from '../services/room-service';
@@ -43,10 +44,20 @@ export default class RoomController implements Controller {
   }
 
   public async init (id: string): Promise<void> {
+    const roomId: string = window.location.pathname.replace('/room/', '');
+
+    this.service.listenCollection(roomId, 'timeRemaining').subscribe(
+      (room: Room) => {
+        this.view.updateTimeReamining(room.timeRemaining.toString());
+        if (room.timeRemaining === 0) {
+          console.log('CABOU O TEMPO DA SALA'); // TO DO fazer algo quando acontece isso
+        }
+      },
+    );
+
     Tooltip.init(document.querySelectorAll('.tooltipped'), {}); // TIRAR DAQUI
-    const roomName: string = window.location.pathname.replace('/room/', '');
-    this.initializePlayersByRoomName(roomName);
-    this.initializeStoriesByRoomName(roomName);
+    this.initializePlayersByRoomName(roomId);
+    this.initializeStoriesByRoomName(roomId);
     this.view.render(id);
     this.view.generateCardsDeck(
       this.insertVote.bind(this),

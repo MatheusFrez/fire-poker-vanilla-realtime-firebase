@@ -51,6 +51,7 @@ ul.cards{
 }
 
 ul.card-stacks{
+  z-index: 1;
   width: 550px;
   list-style-type: none; margin: 0 auto 20px; padding: 0;
   position: relative;
@@ -277,6 +278,11 @@ ul.card-stacks{
 // ---- /// MEDIAS
 
 @media(max-width:1500px) {
+
+  .card-history {
+    width: fit-content;
+    position: relative;
+  }
 
   .d-none {
     display: none;

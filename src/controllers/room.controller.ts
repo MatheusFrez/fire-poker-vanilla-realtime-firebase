@@ -3,18 +3,38 @@ import Card from '../models/card';
 import Player from '../models/player';
 import Room from '../models/room';
 import UserStory from '../models/user-story';
-import Vote from '../models/vote';
 import RoomSingletonService from '../services/room-service';
 import RoomView from '../views/room.view';
 import Controller from './controller';
 
 export default class RoomController implements Controller {
   private view: RoomView;
-  private vote: Vote;
-  private votes: Card[]
+  private votes: Card[];
   private service: RoomSingletonService;
-
-  private players: Array<Player> | Promise<Array<Player>> = []
+  private roomId: string;
+  private playersTest =
+  [
+    {
+      role: 'admin',
+      name: 'Everton',
+    },
+    {
+      role: 'player',
+      name: 'Lucas',
+    },
+    {
+      role: 'player',
+      name: 'Matheus',
+    },
+    {
+      role: 'player',
+      name: 'Wellington',
+    },
+    {
+      role: 'player',
+      name: 'Sei la',
+    },
+  ]
 
   private histories: Array<UserStory> | Promise<Array<UserStory>> = []
 
@@ -22,25 +42,19 @@ export default class RoomController implements Controller {
     this.view = new RoomView();
     this.service = RoomSingletonService.getInstance();
     this.votes = [];
-
-    setTimeout(() => {
-      document.querySelectorAll('.stack').forEach((element:Element) => {
-        element.classList.remove('stack-center');
-      });
-      document.getElementById('card-stacks').classList.toggle('transition');
-    }, 500);
+    this.roomId = window.location.pathname.replace('/room/', '');
   }
 
   private async initializePlayersByRoomName (roomName: string) {
-    const players: Promise<Array<Player>> = this.service.findById(roomName)
-      .then(internalRoom => internalRoom.players);
-    this.players = players || [];
+    this.service.findById(roomName)
+      .then(internalRoom => internalRoom.players)
+      .then((players: Player[]) => this.view.listPlayers(players));
   }
 
   private async initializeStoriesByRoomName (roomName: string) {
-    const stories: Promise<Array<UserStory>> = this.service.findById(roomName)
-      .then(internalRoom => internalRoom.userStories);
-    this.histories = stories || [];
+    this.service.findById(roomName)
+      .then(internalRoom => internalRoom.userStories)
+      .then((histories: UserStory[]) => this.view.generateCardsUserHistory(histories));
   }
 
   public async init (id: string): Promise<void> {
@@ -48,16 +62,20 @@ export default class RoomController implements Controller {
 
     this.service.listenCollection(roomId, 'timeRemaining').subscribe(
       (room: Room) => {
-        this.view.updateTimeReamining(room.timeRemaining.toString());
+        if (room.timeRemaining === 59) {
+          this.view.openCardsDeck();
+        }
+        this.view.updateTimeReamining(room.timeRemaining?.toString());
         if (room.timeRemaining === 0) {
           console.log('CABOU O TEMPO DA SALA'); // TO DO fazer algo quando acontece isso
+          this.view.closeCardsDeck();
         }
       },
     );
 
     Tooltip.init(document.querySelectorAll('.tooltipped'), {}); // TIRAR DAQUI
-    this.initializePlayersByRoomName(roomId);
-    this.initializeStoriesByRoomName(roomId);
+    this.initializePlayersByRoomName(this.roomId);
+    this.initializeStoriesByRoomName(this.roomId);
     this.view.render(id);
     this.view.generateCardsDeck(
       this.insertVote.bind(this),
@@ -68,8 +86,25 @@ export default class RoomController implements Controller {
       this.insertVote.bind(this),
       this.validateCards.bind(this),
       this.getCountVote.bind(this));
-    this.view.listPlayers(this.players as Player[]);
+
     this.view.generateCardsUserHistory(this.histories as UserStory[]);
+    this.view.onClickShowPlayersModal(this.playersTest as Player[]);
+    this.view.onClickShowHistoriesModal(this.histories as UserStory[]);
+    this.view.onClickConfirmPlay(this.initializeCounter.bind(this));
+    this.onEnterPlayer();
+
+    if (localStorage.getItem('player-id') === 'numero2-05r8f') {
+      this.view.generateBackdropAdmin(this.initializeCounter.bind(this));
+    } /// Fazer a verificação aqui pra ver o admin
+
+    Tooltip.init(document.querySelectorAll('.tooltipped'), {}); // TIRAR DAQUI
+  }
+
+  onEnterPlayer () {
+    this.service.listenCollection(this.roomId, 'players').subscribe(
+      ({ players }: any) => { // Tirar isso aki
+        this.view.listPlayers(players);
+      });
   }
 
   private insertVote (card: Card) {
@@ -86,7 +121,14 @@ export default class RoomController implements Controller {
   }
 
   private validateCards (card: Card): boolean {
-    return true;
+    if (!this.votes.length || this.findIndex(card) >= 0) {
+      return true;
+    } else {
+      if ((card.description && this.votes.length > 0) || (card.value && this.hasSpecialCard())) {
+        return false;
+      }
+      return true;
+    }
   }
 
   public getCountVote (): number | string {
@@ -95,5 +137,15 @@ export default class RoomController implements Controller {
 
   private hasSpecialCard (): boolean {
     return !!this.votes.find((value) => value.description);
+  }
+
+  private async initializeCounter () {
+    const roomToUpdate: Room = await this.service.findById(this.roomId);
+    roomToUpdate.timeRemaining = roomToUpdate.settings.timeout;
+    const refreshId = setInterval(async () => {
+      if (roomToUpdate.timeRemaining === 1) { clearInterval(refreshId); }
+      roomToUpdate.timeRemaining--;
+      await this.service.upsert(roomToUpdate);
+    }, 1000);
   }
 }

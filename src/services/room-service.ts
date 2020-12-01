@@ -45,7 +45,7 @@ export default class RoomSingletonService {
       .set(toSimpleJson(room));
   }
 
-  public listenCollection (id: string, field: string): Observable<Room> {
+  public listenCollection (id: string, field: string): Observable<any> {
     try {
       return Observable.create(
         (observer) => {

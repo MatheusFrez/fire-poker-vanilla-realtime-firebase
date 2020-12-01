@@ -26,7 +26,7 @@ export function cardDeck (card: Card, index: number): string {
 
 export function cardUserHistory (history: UserStory, index: number): string {
   return `
-    <div class="card-history" id=${index}>
+    <div class="card-history" id=history-${index}>
       <h4>${history.name}</h4>
       <p>
           ${history.description}

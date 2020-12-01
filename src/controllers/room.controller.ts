@@ -3,6 +3,7 @@ import Card from '../models/card';
 import Player from '../models/player';
 import UserStory from '../models/user-story';
 import Vote from '../models/vote';
+import RoomSingletonService from '../services/room-service';
 import RoomView from '../views/room.view';
 import Controller from './controller';
 
@@ -10,44 +11,17 @@ export default class RoomController implements Controller {
   private view: RoomView;
   private vote: Vote;
   private votes: Card[]
+  private service: RoomSingletonService;
 
-  private players =
-  [
-    {
-      role: 'admin',
-      name: 'Everton',
-    },
-    {
-      role: 'player',
-      name: 'Lucas',
-    },
-    {
-      role: 'player',
-      name: 'Matheus',
-    },
-  ]
+  private players: Array<Player> | Promise<Array<Player>> = []
 
-  private histories =
-  [
-    {
-      name: 'Jogar um jogo',
-      description: 'Como um jogador desejo jogar um jogo para jogar um jogo',
-    },
-    {
-      name: 'Vencer um jogo',
-      description: 'Como um jogador desejo jogar um jogo para jogar um jogo',
-    },
-    {
-      name: 'Jogar um jogo',
-      description: 'Como um jogador desejo jogar um jogo para jogar um jogo',
-    },
-
-  ]
+  private histories: Array<UserStory> | Promise<Array<UserStory>> = []
 
   constructor () {
     this.view = new RoomView();
-    // this.vote = new Vote();
+    this.service = RoomSingletonService.getInstance();
     this.votes = [];
+
     setTimeout(() => {
       document.querySelectorAll('.stack').forEach((element:Element) => {
         element.classList.remove('stack-center');
@@ -56,7 +30,23 @@ export default class RoomController implements Controller {
     }, 500);
   }
 
-  public init (id: string): void {
+  private async initializePlayersByRoomName (roomName: string) {
+    const players: Promise<Array<Player>> = this.service.findById(roomName)
+      .then(internalRoom => internalRoom.players);
+    this.players = players || [];
+  }
+
+  private async initializeStoriesByRoomName (roomName: string) {
+    const stories: Promise<Array<UserStory>> = this.service.findById(roomName)
+      .then(internalRoom => internalRoom.userStories);
+    this.histories = stories || [];
+  }
+
+  public async init (id: string): Promise<void> {
+    Tooltip.init(document.querySelectorAll('.tooltipped'), {}); // TIRAR DAQUI
+    const roomName: string = window.location.pathname.replace('/room/', '');
+    this.initializePlayersByRoomName(roomName);
+    this.initializeStoriesByRoomName(roomName);
     this.view.render(id);
     this.view.generateCardsDeck(
       this.insertVote.bind(this),
@@ -69,8 +59,6 @@ export default class RoomController implements Controller {
       this.getCountVote.bind(this));
     this.view.listPlayers(this.players as Player[]);
     this.view.generateCardsUserHistory(this.histories as UserStory[]);
-
-    Tooltip.init(document.querySelectorAll('.tooltipped'), {}); // TIRAR DAQUI
   }
 
   private insertVote (card: Card) {

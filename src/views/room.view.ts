@@ -123,14 +123,16 @@ export default class RoomView extends View {
     });
   }
 
-  public generateCardsUserHistory (histories: UserStory[]): void {
+  public async generateCardsUserHistory (histories: UserStory[] | Promise<Array<UserStory>>): Promise<void> {
+    histories = await histories;
     const section = document.getElementById('histories-wrapper');
-    histories.forEach((history: UserStory, index: number) => {
+    (histories || []).forEach((history: UserStory, index: number) => {
       section.insertAdjacentHTML('afterbegin', cardUserHistory(history, index));
     });
   }
 
-  public listPlayers (players: Player[]): void {
+  public async listPlayers (players: Player[] | Promise<Array<Player>>): Promise<void> {
+    players = await players;
     const tbody = document.getElementById('tbody');
     players.forEach((player) => {
       tbody.insertAdjacentHTML('afterbegin', `

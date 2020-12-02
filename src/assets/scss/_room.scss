@@ -1,78 +1,70 @@
 #room {
-  background: #666 url(https://s.cdpn.io/44759/Wood-Backgrounds-Picture.jpg) no-repeat top center;
+  background: url(https://s.cdpn.io/44759/Wood-Backgrounds-Picture.jpg) no-repeat top center;
   background-position: center;
   background-size: cover;
   background-attachment: fixed;
   backdrop-filter: brightness(0.6);
   height: 100vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+
+  .d-flex {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .player-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 5px;
+  }
+
   table {
-    background-color: #EDEBD7;
-    border: 1px solid #423E37;
-    box-shadow: 9px 11px 3px 0px rgba(0, 0, 0, 0.2);
-    box-sizing: border-box;
-    padding: 40px;
+    i {
+      vertical-align: middle;
+    }
+  }
+
+  .cards {
+    margin: 0 auto;
   }
 
   .player-container {
-    position: relative;
-    top: 25vh;
+    background-color: #EDEBD7;
+    border: 1px solid #423E37;
+    box-sizing: border-box;
+    box-shadow: 9px 11px 3px 0px rgba(0, 0, 0, 0.2);
+    margin-top: 20px;
+    margin: 20px;
+    width: 350px;
+    padding: 20px;
+    cursor: default;
   }
 
-  .wrapper {
-    width: 100vw;
-    padding-left: 35px;
-    padding-right: 20px;
-  }
-
-  #btn-confirm-play {
-    position: fixed;
-    bottom: 1em;
-    transform: translateX(-50%);
-    left: 50%;
-    height: 6vh;
+  .button-wrapper {
+    margin-top: 20px;
+    text-align: center;
   }
 
   .check {
-    background: rgba(0, 250, 154, 0.5) !important;
+    transform: translateY(-8px);
+
+    .card {
+      background: #64b5f6 !important;
+    }
   }
 
-    .cards-container-wrapper {
-        width: fit-content;
-        height: 85vh;
-        overflow-x: scroll;
-        display: flex;
-        flex-wrap: wrap;
-    }
-
-    .cards-container-wrapper .card {
-        margin: 7px;
-    }
-
-  #fab {
-    top: 20px;
-    justify-content: center;
-    align-items: center;
+  .cards-container-wrapper {
+    width: fit-content;
+    height: 85vh;
+    overflow-x: scroll;
     display: flex;
+    flex-wrap: wrap;
   }
 
-  #dropdown1 span {
-    position: relative;
-    left: 35%;
-  }
-
-  #admin-icon {
-    vertical-align: middle;
-    color: green;
-  }
-
-  .button-wrapper-mobile {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 10vh;
-    h3 {
-      margin: 0;
-      margin-right: 1em;
-    }
+  .cards-container-wrapper .card {
+    margin: 7px;
   }
 }

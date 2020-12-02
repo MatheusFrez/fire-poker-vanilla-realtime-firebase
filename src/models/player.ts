@@ -15,4 +15,8 @@ export default class Player {
     this.role = params.role;
     this.name = params.name;
   }
+
+  public get isAdmin (): boolean {
+    return this.role === RoleType.ADMIN;
+  }
 }

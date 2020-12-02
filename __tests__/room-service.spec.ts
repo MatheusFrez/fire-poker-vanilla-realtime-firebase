@@ -1,4 +1,5 @@
 import { mixedDeck } from '../src/common/decks';
+import Player from '../src/models/player';
 import { RoleType } from '../src/models/role-type';
 import Room from '../src/models/room';
 import RoomSingletonService from '../src/services/room-service';
@@ -13,10 +14,10 @@ describe('Tests about collection of room on database', () => {
         timeout: 200,
         deck: mixedDeck,
       },
-      players: [{
+      players: [new Player({
         name: 'doidao',
         role: RoleType.ADMIN,
-      }],
+      })],
       title: 'teste',
       userStories: [],
       id: 'test-room-1',
@@ -34,10 +35,10 @@ describe('Tests about collection of room on database', () => {
         timeout: 200,
         deck: mixedDeck,
       },
-      players: [{
+      players: [new Player({
         name: 'doidao',
         role: RoleType.ADMIN,
-      }],
+      })],
       title: 'teste',
       userStories: [],
       id: 'test-room-1',

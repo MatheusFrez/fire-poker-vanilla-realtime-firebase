@@ -1,6 +1,6 @@
-import { Tooltip } from 'materialize-css';
 import Card from '../models/card';
 import Player from '../models/player';
+import { RoleType } from '../models/role-type';
 import UserStory from '../models/user-story';
 import Vote from '../models/vote';
 import RoomView from '../views/room.view';
@@ -11,20 +11,19 @@ export default class RoomController implements Controller {
   private vote: Vote;
   private votes: Card[]
 
-  private players =
-  [
-    {
-      role: 'admin',
+  private players =[
+    new Player({
+      role: RoleType.ADMIN,
       name: 'Everton',
-    },
-    {
-      role: 'player',
+    }),
+    new Player({
+      role: RoleType.PLAYER,
       name: 'Lucas',
-    },
-    {
-      role: 'player',
+    }),
+    new Player({
+      role: RoleType.PLAYER,
       name: 'Matheus',
-    },
+    }),
   ]
 
   private histories =
@@ -48,12 +47,6 @@ export default class RoomController implements Controller {
     this.view = new RoomView();
     // this.vote = new Vote();
     this.votes = [];
-    setTimeout(() => {
-      document.querySelectorAll('.stack').forEach((element:Element) => {
-        element.classList.remove('stack-center');
-      });
-      document.getElementById('card-stacks').classList.toggle('transition');
-    }, 500);
   }
 
   public init (id: string): void {
@@ -63,14 +56,8 @@ export default class RoomController implements Controller {
       this.validateCards.bind(this),
       this.getCountVote.bind(this),
     );
-    this.view.generateCardsDeckMobile(
-      this.insertVote.bind(this),
-      this.validateCards.bind(this),
-      this.getCountVote.bind(this));
     this.view.listPlayers(this.players as Player[]);
     this.view.generateCardsUserHistory(this.histories as UserStory[]);
-
-    Tooltip.init(document.querySelectorAll('.tooltipped'), {}); // TIRAR DAQUI
   }
 
   private insertVote (card: Card) {

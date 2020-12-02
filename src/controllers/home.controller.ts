@@ -4,6 +4,9 @@ import router from '../router/index';
 import RoomSingletonService from '../services/room-service';
 import Room from '../models/room';
 import ToastView from '../views/toast-view';
+import Player from '../models/player';
+import { RoleType } from '../models/role-type';
+import { PLAYER_ITEM, ROOM_ITEM } from '../common/constants';
 
 export default class HomeController implements Controller {
   private view: HomeView;
@@ -16,19 +19,21 @@ export default class HomeController implements Controller {
     this.service = RoomSingletonService.getInstance();
   }
 
-  public init (): void {
+  public init (room: string): void {
     this.view.render();
+    if (room) {
+      this.view.roomName = room;
+    }
     this.view.onCreateRoom(() => this.create());
     this.view.onJoinRoom(() => this.join());
 
-    const playerIdOnStorage: string = localStorage.getItem('player-id'); // TO DO popular isso na controler da sala após o player ter entrado
-    const lastRoomOnStorage: string = localStorage.getItem('last-room'); // TO DO popular isso na controler da sala após o player ter entrado
+    const playerIdOnStorage: string = localStorage.getItem(PLAYER_ITEM);
+    const lastRoomOnStorage: string = localStorage.getItem(ROOM_ITEM);
     if (playerIdOnStorage && lastRoomOnStorage) this.redirectToGameRoom(lastRoomOnStorage); // Usuário caiu da sala e abriu o navegador novamente
   }
 
   private redirectToGameRoom (roomId: string) {
     router.push(`/room/${roomId}`);
-    // TO DO --> redireciona para a rota da sala do jogo que não existe ainda
   }
 
   private create (): void {
@@ -45,16 +50,24 @@ export default class HomeController implements Controller {
     const roomId: string = this.view.roomName;
     if (!this.validate(playerName, roomId)) return;
 
-    const rooms: Array<Room> = await this.service.list();
-    const roomToJoin: Room = rooms.find(room => room.identifier === roomId);
+    const roomToJoin: Room = await this.service.findById(roomId);
 
     const resultValidations: boolean = this.makeBasicVerificationsToJoinOnRoom({ roomToJoin, playerName });
     if (!resultValidations) return;
+
+    const player: Player = new Player({
+      role: RoleType.PLAYER,
+      name: playerName,
+    });
+
+    roomToJoin.players.push(player);
 
     this.service.upsert(roomToJoin) // TO DO criar um método insertUser na service ao invés de chamar esse upsert
       .then(() => {
         this.toastView.showSuccessMessage('Sucesso!', 'Sala entrada com sucesso! =)');
         this.redirectToGameRoom(roomId);
+        localStorage.setItem(PLAYER_ITEM, player.id);
+        localStorage.setItem(ROOM_ITEM, roomId);
       })
       .catch(() => this.toastView.showErrorMessage('Erro ao entrar na sala!', 'Ocorreu um erro desconhecidom contate um de nossos administradores! =)'));
   }

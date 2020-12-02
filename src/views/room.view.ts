@@ -1,11 +1,12 @@
 import View from './view';
 import { Tooltip } from 'materialize-css';
-import { mixedDeck } from '../common/decks';
 import Card from '../models/card';
 import { cardDeck, cardUserHistory } from '../components/card';
 import Player from '../models/player';
 import UserStory from '../models/user-story';
-import timer from '../components/timer';
+import timer, { updateTimer } from '../components/timer';
+import Deck from '../models/deck';
+import loader from '../components/loader';
 
 export default class RoomView extends View {
   protected template (): string {
@@ -39,9 +40,7 @@ export default class RoomView extends View {
                 <table>
                   <tbody id="tbody"></tbody>
                 </table>
-                <div class="button-wrapper">
-                  <button class="waves-effect waves-light btn-small" id="btn-confirm-play">Iniciar Jogo</button>
-                </div>
+                <div class="button-wrapper"></div>
               </div>
               <div class="col">
                 <section class="cards-history-container" id="histories-wrapper"></section>
@@ -53,36 +52,41 @@ export default class RoomView extends View {
     `;
   };
 
-  public generateCardsDeck (onClick: Function, onCheck: Function, onDone: Function): void {
+  public generateCardsDeck (deck: Deck, onClick: Function, onCheck: Function): void {
     document.querySelectorAll('.stack').forEach((element: Element, index: number) => {
-      const li = element.getElementsByTagName('ul')[0];
-      mixedDeck.cards.slice(index * 4, (index + 1) * 4).forEach((card: Card, anotherIndex: number) => {
-        li.insertAdjacentHTML('afterbegin', `<li class="card card-${anotherIndex}"></li>`);
-        li.getElementsByTagName('li')[0].insertAdjacentHTML('afterbegin', cardDeck(card, anotherIndex));
-
-        element.querySelector('.card').addEventListener('click', (event: any) => {
+      const ul = element.querySelector('ul');
+      const start = index * 4;
+      const end = (index + 1) * 4;
+      deck.cards.slice(start, end).forEach((card: Card, anotherIndex: number) => {
+        const li = document.createElement('li');
+        li.className = `card card-${anotherIndex}`;
+        li.innerHTML = cardDeck(card, anotherIndex);
+        li.addEventListener('click', () => {
           if (!onCheck(card)) {
             return;
           }
           onClick(card);
-          element.querySelector(`.card-${anotherIndex}`).classList.toggle('check');
-          document.getElementById('counter-vote').innerHTML = onDone().toString();
+          li.classList.toggle('check');
         });
+        ul.appendChild(li);
       });
     });
   }
 
-  public generateCardsUserHistory (histories: UserStory[]): void {
+  public updateTimeReamining (time: number, total: number) {
+    updateTimer(time, total);
+  }
+
+  public async generateCardsUserHistory (histories: UserStory[]): Promise<void> {
     const section = document.getElementById('histories-wrapper');
     histories.forEach((history: UserStory, index: number) => {
       section.insertAdjacentHTML('afterbegin', cardUserHistory(history, index));
     });
   }
 
-  public listPlayers (players: Player[]): void {
+  public async listPlayers (players: Player[]): Promise<void> {
     const tbody = document.getElementById('tbody');
-    players.forEach((player) => {
-      tbody.insertAdjacentHTML('afterbegin', `
+    tbody.innerHTML = players.map((player) => `
       <tr>
         <td class="truncate tooltipped" data-tooltip="${player.name}${player.isAdmin ? '<br>Coordenador' : ''}">
           <i class="material-icons ${player.isAdmin ? 'teal-text' : ''}">person</i>
@@ -90,12 +94,50 @@ export default class RoomView extends View {
         </td>
         <td>1</td>
       </tr>
-      `);
-    });
+      `,
+    ).join('');
     Tooltip.init(document.querySelectorAll('.tooltipped'), {
       exitDelay: 0,
       margin: 0,
       position: 'left',
     });
+  }
+
+  public openCardsDeck (): void {
+    document.getElementById('card-stacks').classList.add('transition');
+  };
+
+  public closeCardsDeck (): void {
+    document.getElementById('card-stacks').classList.remove('transition');
+  }
+
+  public showInitGame (onClick: any): void {
+    const initBtn = document.createElement('button');
+    initBtn.className = 'waves-effect waves-light btn-small';
+    initBtn.textContent = 'Iniciar Jogo';
+    initBtn.addEventListener('click', () => {
+      onClick();
+    });
+    document.querySelector('.button-wrapper').append(initBtn);
+  }
+
+  // public generateBackdropAdmin (onClick: Function): void {
+  //   document.getElementById('room').insertAdjacentHTML('afterbegin', `
+  //     <div id="backdrop">
+  //       <button class="modal-close waves-effect waves-green btn" id="btn-begin">Começar jogo</a>
+  //     </div>
+  //   `);
+  //   document.getElementById('btn-begin').addEventListener('click', () => {
+  //     onClick();
+  //     document.getElementById('backdrop').style.display = 'none';
+  //   });
+  // }
+
+  public showLoader (message: string): void {
+    document.body.insertAdjacentHTML('afterbegin', loader(message));
+  }
+
+  public hideLoader (): void {
+    document.querySelector('.loading').remove();
   }
 }

@@ -7,9 +7,9 @@ import Router from './router';
 const router = new Router({
   routes: [{
     path: /^\/$/,
-    callback: () => {
+    callback: (room: string) => {
       new HomeController()
-        .init();
+        .init(room);
     },
   }, {
     path: /^\/room\/register\/?/,

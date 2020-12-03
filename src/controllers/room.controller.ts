@@ -1,9 +1,11 @@
-import { PLAYER_ITEM } from '../common/constants';
+import { CARD_DEFAULT, PLAYER_ITEM } from '../common/constants';
 import toast from '../common/toast';
 import Card from '../models/card';
 import Player from '../models/player';
 import { RoleType } from '../models/role-type';
 import Room from '../models/room';
+import Round from '../models/round';
+import Vote from '../models/vote';
 import router from '../router';
 import RoomSingletonService from '../services/room-service';
 import RoomView from '../views/room.view';
@@ -15,6 +17,7 @@ export default class RoomController implements Controller {
   private currentPlayer: Player;
   private room: Room;
   private service: RoomSingletonService;
+  private timerInterval: any;
 
   constructor () {
     this.view = new RoomView();
@@ -22,12 +25,20 @@ export default class RoomController implements Controller {
     this.votes = [];
   }
 
-  private async listPlayers () {
+  private listPlayers (): void {
     this.view.listPlayers(this.room.players);
   }
 
-  private lisStories () {
-    this.view.generateCardsUserHistory(this.room.userStories);
+  private lisStories (): void {
+    this.view.generateCardsUserHistory(this.room.pendingUserStories);
+  }
+
+  private listDeck (): void {
+    this.view.generateCardsDeck(
+      this.room.settings.deck,
+      this.insertVote.bind(this),
+      this.validateCards.bind(this),
+    );
   }
 
   public async init (id: string): Promise<void> {
@@ -39,25 +50,15 @@ export default class RoomController implements Controller {
       return router.push('/', id);
     }
     this.view.render();
-    this.service.listenCollection(id, 'timeRemaining').subscribe(
-      (room: Room) => {
-        if (room.timeRemaining) {
-          this.view.openCardsDeck();
-        } else {
-          this.view.closeCardsDeck();
-        }
-        this.view.updateTimeReamining(room.timeRemaining, this.room.settings.timeout);
-      },
-    );
     this.listPlayers();
     this.lisStories();
-    this.view.generateCardsDeck(
-      this.room.settings.deck,
-      this.insertVote.bind(this),
-      this.validateCards.bind(this),
-    );
+    this.listDeck();
     this.initAdminMode();
     this.onEnterPlayer(id);
+    this.listenForStartRound(id);
+    this.listenForFinishRound(id);
+    this.listenForTimer(id);
+    this.listenForVotes(id);
   }
 
   private async initRoom (id: string): Promise<boolean> {
@@ -77,16 +78,17 @@ export default class RoomController implements Controller {
       toast('Informe seu nome de jogador!');
       return false;
     }
-    this.currentPlayer = this.room.players.find(
+    const currentPlayer = this.room.players.find(
       (player) => player.id === playerId,
     );
+    this.currentPlayer = new Player(currentPlayer);
     return true;
   }
 
   private initAdminMode (): void {
     if (this.currentPlayer.role === RoleType.ADMIN) {
       this.view.showInitGame(
-        this.initializeCounter.bind(this),
+        this.nextRound.bind(this),
       );
     }
   }
@@ -131,12 +133,107 @@ export default class RoomController implements Controller {
     return !!this.votes.find((value) => value.description);
   }
 
-  private async initializeCounter () {
-    this.room.timeRemaining = this.room.settings.timeout;
-    const refreshId = setInterval(async () => {
-      if (this.room.timeRemaining === 1) { clearInterval(refreshId); }
-      this.room.timeRemaining--;
-      await this.service.upsert(this.room);
+  private initializeCounter (): void {
+    this.timerInterval = setInterval(() => {
+      this.room.round.timeRemaining--;
+      this.service.upsert(this.room);
+      const timeover: boolean = this.room.round.timeRemaining === 0;
+      if (timeover && !this.everyoneVoted) {
+        this.setDefaultVotes();
+      }
     }, 1000);
+  }
+
+  private async nextRound (): Promise<void> {
+    const [nextUserStory] = this.room.pendingUserStories;
+    const round: Round = new Round({
+      timeRemaining: this.room.settings.timeout,
+      votes: [],
+      userStory: nextUserStory,
+      started: true,
+    });
+    this.room.round = round;
+    await this.service.upsert(this.room);
+  }
+
+  private setDefaultVotes (): void {
+    if (!this.room.round.votes) {
+      this.room.round.votes = [];
+    }
+    this.room.players.forEach((player) => {
+      const voted: boolean = this.room.round.votes.some(
+        (vote) => vote.player.id === player.id,
+      );
+      if (!voted) {
+        const defaultVoute: Vote = new Vote({
+          player,
+          cards: [CARD_DEFAULT],
+        });
+        this.room.round.votes.push(defaultVoute);
+      }
+    });
+  }
+
+  private async finishRound (): Promise<void> {
+    if (this.room.finished) {
+      return;
+    }
+    clearInterval(this.timerInterval);
+    this.room.round.started = false;
+    this.room.round.finished = true;
+    this.room.round.timeRemaining = this.room.settings.timeout;
+    await this.service.upsert(this.room);
+  }
+
+  private listenForVotes (id: string): void {
+    this.service.listenCollection(id, 'round/votes').subscribe(
+      (round: Round) => {
+        if (!round.votes) {
+          return;
+        }
+        this.room.round = round;
+        if (this.everyoneVoted) {
+          this.finishRound();
+        }
+      },
+    );
+  }
+
+  private listenForStartRound (id: string): void {
+    this.service.listenCollection(id, 'round/started').subscribe(
+      (round: Round) => {
+        if (round.started) {
+          this.view.openCardsDeck();
+          if (this.currentPlayer.isAdmin) {
+            this.initializeCounter();
+          }
+        }
+      },
+    );
+  }
+
+  private listenForFinishRound (id: string): void {
+    this.service.listenCollection(id, 'round/finished').subscribe(
+      (round: Round) => {
+        if (round.finished) {
+          this.view.closeCardsDeck();
+        }
+      },
+    );
+  }
+
+  private listenForTimer (id: string): void {
+    this.service.listenCollection(id, 'round/timeRemaining').subscribe(
+      (round: Round) => {
+        this.view.updateTimeReamining(
+          round.timeRemaining,
+          this.room.settings.timeout,
+        );
+      },
+    );
+  }
+
+  private get everyoneVoted (): boolean {
+    return this.room.round.votes?.length === this.room.players.length;
   }
 }

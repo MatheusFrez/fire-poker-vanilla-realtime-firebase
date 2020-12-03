@@ -9,7 +9,6 @@ describe('Tests about collection of room on database', () => {
   it('Should insert a room on database.', async () => {
     const roomToInsert: Room = new Room({
       finished: false,
-      identifier: 'teste-room-jest',
       settings: {
         timeout: 200,
         deck: mixedDeck,
@@ -19,7 +18,7 @@ describe('Tests about collection of room on database', () => {
         role: RoleType.ADMIN,
       })],
       title: 'teste',
-      userStories: [],
+      pendingUserStories: [],
       id: 'test-room-1',
     });
     await roomService.upsert(roomToInsert);
@@ -30,7 +29,6 @@ describe('Tests about collection of room on database', () => {
   it('Should update room on database.', async () => {
     const roomToUpdate: Room = new Room({
       finished: false,
-      identifier: 'teste-room-jest-updated',
       settings: {
         timeout: 200,
         deck: mixedDeck,
@@ -39,13 +37,13 @@ describe('Tests about collection of room on database', () => {
         name: 'doidao',
         role: RoleType.ADMIN,
       })],
-      title: 'teste',
-      userStories: [],
+      title: 'teste-room-jest-updated',
+      pendingUserStories: [],
       id: 'test-room-1',
     });
     await roomService.upsert(roomToUpdate);
     const room: Room = await roomService.findById('test-room-1');
-    expect(room.identifier).toEqual('teste-room-jest-updated');
+    expect(room.title).toEqual('teste-room-jest-updated');
   });
 
   it('Should remove a room from database.', async () => {

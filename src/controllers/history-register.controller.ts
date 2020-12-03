@@ -7,6 +7,7 @@ import Room from '../models/room';
 import Player from '../models/player';
 import { RoleType } from '../models/role-type';
 import toast from '../common/toast';
+import { PLAYER_ITEM, ROOM_ITEM } from '../common/constants';
 
 export default class HistoryRegisterController implements Controller {
   private view: HistoryRegisterView;
@@ -117,6 +118,11 @@ export default class HistoryRegisterController implements Controller {
     return true;
   }
 
+  private storeGameInfo (playerId: string, roomId: string): void {
+    localStorage.setItem(PLAYER_ITEM, playerId);
+    localStorage.setItem(ROOM_ITEM, roomId);
+  }
+
   private async handleCreateRoom (): Promise<void> {
     if (!this.userStories.length) {
       toast('Adicione as histórias de usuário!');
@@ -129,13 +135,14 @@ export default class HistoryRegisterController implements Controller {
     const room = new Room({
       title: this.roomName,
       finished: false,
-      userStories: this.userStories,
+      pendingUserStories: this.userStories,
       players: [admin],
     });
     this.view.showLoader('Criando sala...');
     const roomService = RoomSingletonService.getInstance();
     await roomService.upsert(room);
     this.view.hideLoader();
+    this.storeGameInfo(admin.id, room.id);
     router.push(`/room/${room.id}`);
   }
 }

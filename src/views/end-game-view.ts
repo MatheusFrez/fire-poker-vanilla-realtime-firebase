@@ -8,13 +8,20 @@ export default class EndGameView extends View {
     <div id="end-game">
       <div class="container">
         <div class="row">
-            <div class="col l12 s12 m12">
-              <div class="card-panel lighten-1 z-depth-4">
+          <div class="col l12 s12 m12">
+            <div class="col l12 s12 m12" id="headers-buttons">
+              <button id="btn-download-json" class="btn-flat"><i class="material-icons left">receipt_long</i>Resultado JSON</button>
+              <button id="btn-imprimir-json" class="btn-flat"><i class="material-icons left">print</i>Resultado</button>
+            </div>
+            <div class="card-panel lighten-1 z-depth-4" id="historias-list">
               <ul class="collapsible expandable" id="collapsible">
 
               </ul>
+              <div>
+                <canvas id="result-chart"></canvas>
               </div>
             </div>
+          </div>
         </div>
       </div>
     </div>
@@ -22,11 +29,20 @@ export default class EndGameView extends View {
   }
 
   protected setup (): void {
-    Collapsible.init(document.querySelectorAll('.collapsible'), {});
+    Collapsible.init(document.querySelectorAll('.collapsible'), { accordion: false });
+  }
+
+  public onDownloadResults (callback: any): void {
+    document.querySelector('#btn-download-json')
+      .addEventListener('click', callback);
+  }
+
+  public onPrintResults (callback: any): void {
+    document.querySelector('#btn-imprimir-json')
+      .addEventListener('click', callback);
   }
 
   public generateCollapsible (userStories: any[]): void {
-    //  console.log("userStories",userStories)
     const collapseElement = document.getElementById('collapsible');
     collapseElement.innerHTML = '';
     userStories.forEach((userStory, index) => {

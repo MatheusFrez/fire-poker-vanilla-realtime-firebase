@@ -12,6 +12,22 @@
     justify-content: space-between;
   }
 
+  #collapsible {
+    margin-top: 22px;
+  }
+
+  #headers-buttons {
+    margin-top: 25px;
+    margin-left: 15px;
+    display: flex;
+    justify-content: space-around;
+  }
+
+  #historias-list {
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+
   .mini-card {
     width: 25px;
     height: 30px;

@@ -32,6 +32,7 @@ export default class RoomController implements Controller {
 
   public async init (id: string): Promise<void> {
     if (!await this.initRoom(id)) {
+      localStorage.clear();
       return router.push('/');
     }
     if (!await this.initPlayer()) {

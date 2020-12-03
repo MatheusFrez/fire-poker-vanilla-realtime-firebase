@@ -3,19 +3,17 @@ import Controller from './controller';
 import router from '../router/index';
 import RoomSingletonService from '../services/room-service';
 import Room from '../models/room';
-import ToastView from '../views/toast-view';
 import Player from '../models/player';
 import { RoleType } from '../models/role-type';
 import { PLAYER_ITEM, ROOM_ITEM } from '../common/constants';
+import toast from '../common/toast';
 
 export default class HomeController implements Controller {
   private view: HomeView;
   private service: RoomSingletonService;
-  private toastView: ToastView;
 
   constructor () {
     this.view = new HomeView();
-    this.toastView = new ToastView();
     this.service = RoomSingletonService.getInstance();
   }
 
@@ -52,7 +50,10 @@ export default class HomeController implements Controller {
 
     const roomToJoin: Room = await this.service.findById(roomId);
 
-    const resultValidations: boolean = this.makeBasicVerificationsToJoinOnRoom({ roomToJoin, playerName });
+    const resultValidations: boolean = this.makeBasicVerificationsToJoinOnRoom(
+      roomToJoin,
+      playerName,
+    );
     if (!resultValidations) return;
 
     const player: Player = new Player({
@@ -64,26 +65,27 @@ export default class HomeController implements Controller {
 
     this.service.upsert(roomToJoin) // TO DO criar um método insertUser na service ao invés de chamar esse upsert
       .then(() => {
-        this.toastView.showSuccessMessage('Sucesso!', 'Sala entrada com sucesso! =)');
-        this.redirectToGameRoom(roomId);
         localStorage.setItem(PLAYER_ITEM, player.id);
         localStorage.setItem(ROOM_ITEM, roomId);
+        this.redirectToGameRoom(roomId);
+        toast('Bem vindo ao jogo! =)');
       })
-      .catch(() => this.toastView.showErrorMessage('Erro ao entrar na sala!', 'Ocorreu um erro desconhecidom contate um de nossos administradores! =)'));
+      .catch(() => toast('Erro ao entrar na sala! =('));
   }
 
-  private makeBasicVerificationsToJoinOnRoom (basicData: any): boolean {
+  private makeBasicVerificationsToJoinOnRoom (roomToJoin: Room, playerName: string): boolean {
     let result: boolean = true;
-    const { roomToJoin, playerName } = basicData;
 
     if (!roomToJoin) {
-      this.toastView.showErrorMessage('Sala não encontrada!', 'Verifique o nome da sala e tente novamente! =)');
+      toast('Sala não encontrada! <br>Verifique o nome da sala e tente novamente.');
       result = false;
     };
 
-    const indexPlayerWithSameName: number = roomToJoin.players.findIndex(player => player.name.toLocaleLowerCase().trim() === playerName.toLocaleLowerCase().trim());
-    if (indexPlayerWithSameName !== -1) {
-      this.toastView.showinfoMessage('Nome já existente!', 'Já existe um jogador com esse nome na sala, tente novamente com outro nome!');
+    const playerNameAlreadyExists = roomToJoin.players.some(
+      (player) => player.name.toLowerCase().trim() === playerName.toLowerCase().trim(),
+    );
+    if (playerNameAlreadyExists) {
+      toast('Nome já existente! <br>Tente novamente com outro nome.');
       result = false;
     };
 

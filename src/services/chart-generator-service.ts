@@ -36,7 +36,7 @@ export default class ChartGeneratorService {
           display: true,
           fontSize: 35,
           fontStyle: 'normal',
-          text: 'Resultado jogadas',
+          text: 'Resultado jogadas %',
           fontColor: 'black',
         },
         plugins: {
@@ -51,9 +51,8 @@ export default class ChartGeneratorService {
   private generateGraphData (room: Room): Array<GraphData> {
     const cardsTotal: Array<CardTotal> = [];
     const cardsResult: Array<GraphData> = [];
-    room.userStories.forEach(storie => {
-      // eslint-disable-next-line dot-notation
-      (storie.votes || storie['Votes'] || []).forEach(vote => { // TO DO REMOVER ESSA FALLBACK NO MODELO FINAL
+    room.estimatedUserStories.forEach(storie => {
+      (storie.votes || []).forEach(vote => {
         vote.cards.forEach(card => {
           const indexCard: number = cardsTotal.findIndex(cardTotal => cardTotal.card === card.symbol);
           if (indexCard === -1) cardsTotal.push({ card: card.symbol, quantityPlayersUsed: 1 });

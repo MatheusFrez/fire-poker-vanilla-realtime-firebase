@@ -25,7 +25,7 @@ export default class EndGameController implements Controller {
   public async init (id: string) :Promise<void> {
     this.room = await this.service.findById(id);
     this.view.render();
-    this.view.generateCollapsible(this.room.userStories);
+    this.view.generateCollapsible(this?.room?.estimatedUserStories ?? []);
     this.renderChart();
   }
 
@@ -35,7 +35,7 @@ export default class EndGameController implements Controller {
 
   private printResults () {
     const element = document.querySelector('#collapsible');
-    this.room.userStories.forEach((value, index) => {
+    this.room.estimatedUserStories.forEach((value, index) => {
       const instance = Collapsible.getInstance(element);
       instance.open(index);
     });
@@ -43,11 +43,11 @@ export default class EndGameController implements Controller {
   }
 
   private downloadResults () {
-    const results = this.room.userStories.map(story => {
+    const results = this.room.estimatedUserStories.map(story => {
       return {
         description: story.description,
         result: story.result,
-        votes: story.votes || story.Votes, // REMOVER ESSA FALLBACK GAMBI NO MODELO FINAL
+        votes: story.votes,
         name: story.name,
       };
     });

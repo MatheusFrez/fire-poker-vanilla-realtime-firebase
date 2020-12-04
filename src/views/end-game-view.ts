@@ -45,31 +45,31 @@ export default class EndGameView extends View {
   public generateCollapsible (userStories: any[]): void {
     const collapseElement = document.getElementById('collapsible');
     collapseElement.innerHTML = '';
-    userStories.forEach((userStory, index) => {
+    (userStories || []).forEach((userStory, index) => {
       const element = document.createElement('li');
       element.innerHTML = `
       <div class="collapsible-header">
         <span class="order">${index + 1}</span>
-        <span class="truncate">${userStory.name}</span>
-        <span> Estimativa: ${userStory.result}</span>
+        <span class="truncate">${userStory?.name ?? ''}</span>
+        <span> Estimativa: ${userStory?.result ?? 0}</span>
       </div>
 
       <div class="collapsible-body">
-        <span>${userStory.description}</span>
+        <span>${userStory?.description ?? ''}</span>
         <hr>
-      ${userStory.Votes.map((vote) => {
+      ${userStory.votes.map((vote) => {
         return `
         <div class="row">
           <div class="col l3 s12" id="name-wrapper">
             <span class="material-icons">
             account_circle
-            </span>${vote.player}
+            </span>${vote?.player?.name ?? ''}
           </div>
           <div class="col l8 s12" id="card-wrapper">
         ${vote.cards.map((card) => {
           return `
             <div class="mini-card">
-              <span>${card.symbol}</span>
+              <span>${card?.symbol ?? ''}</span>
             </div>`;
         }).join('')}
           </div>

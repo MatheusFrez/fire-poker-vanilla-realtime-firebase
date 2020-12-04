@@ -1,0 +1,40 @@
+#end-game {
+  background-image: url('../img/bg1.png');
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
+  backdrop-filter: brightness(0.6);
+  height: 100vh;
+  width: 100vw;
+
+  .collapsible-header {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .mini-card {
+    width: 25px;
+    height: 30px;
+    display: flex;
+    background: white;
+    margin-right: 10px;
+    margin-left: 10px;
+    span {
+      margin: auto;
+    }
+  }
+
+  #name-wrapper {
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    span {
+      margin-right: 0.3em;
+    }
+  }
+
+  #card-wrapper {
+    display:flex;
+    flex-wrap: wrap;
+  }
+}

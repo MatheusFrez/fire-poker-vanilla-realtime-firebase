@@ -8,6 +8,82 @@
   overflow-y: auto;
   box-sizing: border-box;
 
+  #result-container {
+    margin-top: 20px;
+    background-color: #EDEBD7;
+    border: 1px solid #423E37;
+    box-sizing: border-box;
+    box-shadow: 9px 11px 3px 0px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    animation: fadeIn 3s;
+    animation-delay: 5s;
+    animation-fill-mode: forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+ }
+
+  .hidden {
+    visibility: collapse;
+  }
+
+  .visible {
+    visibility: visible;
+  }
+
+  .custom-card {
+    margin: 0;
+    background: #eeeae7;
+    height: auto;
+    max-height: 180px;
+    max-width: 320px;
+    transition: all ease-in 0.3s;
+    width: 32vw;
+    margin-top: 10px;
+    padding: 20px;
+  }
+
+  #limited-text {
+    max-width: 320px;
+    width: auto;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .mini-card {
+    width: 25px;
+    height: 30px;
+    display: flex;
+    background: white;
+    margin-right: 10px;
+    margin-left: 10px;
+    span {
+      margin: auto;
+    }
+  }
+
+  #name-wrapper {
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    font-size: 10px;
+    span {
+      margin-right: 0.3em;
+    }
+  }
+
+  .center {
+    text-align: center;
+  }
+
+  #card-wrapper {
+    display:flex;
+    flex-wrap: wrap;
+  }
+
   .d-flex {
     display: flex;
     flex-wrap: wrap;

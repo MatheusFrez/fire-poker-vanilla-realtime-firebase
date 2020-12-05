@@ -8,13 +8,16 @@ import timer, { updateTimer } from '../components/timer';
 import Deck from '../models/deck';
 import loader from '../components/loader';
 import playerItem from '../components/player';
+import Round from '../models/round';
+import ChartGeneratorService from '../services/chart-generator-service';
+import Room from '../models/room';
 
 export default class RoomView extends View {
   protected template (): string {
     return `
       <div id="room">
         <div class="wrapper">
-          <div class="d-flex">
+          <div class="d-flex" id="dados-jogada">
             <div class="col cards">
               <ul class="card-stacks" id="card-stacks">
                 <li class="stack stack-1">
@@ -30,6 +33,9 @@ export default class RoomView extends View {
                   <ul class="cards-down"></ul>
                 </li>
               </ul>
+            </div>
+            <div class="col" id="result-container">
+
             </div>
             <div class="col">
               <div class="player-container">
@@ -105,6 +111,73 @@ export default class RoomView extends View {
 
   public hideCurrentUserStory (): void {
     document.querySelector('.card-history').classList.add('hidden');
+  }
+
+  public hideCurrentResultStorie (): void {
+    document.querySelector('#result-container').classList.remove('visible');
+    document.querySelector('#result-container').classList.add('hidden');
+  }
+
+  public showCurrentResultStorie (): void {
+    document.querySelector('#result-container').classList.add('visible');
+  }
+
+  public removeResultAndGraph () {
+    const resultContainer = document.getElementById('result-container');
+    resultContainer.remove();
+  }
+
+  public showStorieResultAndGraph (room: Room): void {
+    const chartGenerator = new ChartGeneratorService();
+    this.generateCardRound(room.round);
+    chartGenerator.renderChart('result-chart-round', room, 'Resultado jogada %', 20);
+  }
+
+  public generateCardRound (round: Round): void {
+    const cardsNotEspecial: Array<Card> = round.votes.map(vote => vote.cards.filter(card => !card.isSpecial).map(card => card))[0];
+    const quantityCardsNotEspecial: number = cardsNotEspecial.length;
+    const totalValueCardsNotEspecial: number = cardsNotEspecial.reduce((total, card) => total + card.value, 0);
+    const averageCardsEspecialValue: number = Math.round(totalValueCardsNotEspecial / quantityCardsNotEspecial);
+
+    const cardElement = document.getElementById('result-container');
+
+    cardElement.innerHTML = `
+        <div id="card-storie">
+          <div class="custom-card">
+            <div class="flex center">
+              <span class="card-title"><i><b>${round?.userStory?.name ?? ''}</b></i></span>
+              <span class="card-title" style="margin-left: 10px;"><b>Estimativa:</b> ${round?.userStory?.result ?? 0}</span>
+            </div>
+            <div class="center" id="limited-text">
+              <span class="card-title" style="margin-left: 10px;"><b>Média de cartas:</b> ${averageCardsEspecialValue}</span><br>
+              <span><i>${round?.userStory?.description ?? ''}</i></span>
+              <hr>
+              ${round?.votes.map((vote) => {
+              return `
+              <div class="row">
+                <div class="col l4 s12" id="name-wrapper">
+                  <span class="material-icons">
+                  account_circle
+                  </span>${vote?.player?.name ?? ''}
+                </div>
+                <div class="col l7 s12" id="card-wrapper">
+                ${vote.cards.map((card) => {
+                return `
+                  <div class="mini-card">
+                    <span>${card?.symbol ?? ''}</span>
+                  </div>`;
+              }).join('')}
+              </div>`;
+              }).join('')}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <canvas id="result-chart-round"></canvas>
+        </div>
+   `;
+    this.showCurrentResultStorie();
   }
 
   public closeCardsDeck (): void {

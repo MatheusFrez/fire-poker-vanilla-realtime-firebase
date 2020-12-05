@@ -70,6 +70,7 @@ export default class RoomController implements Controller {
       return router.push('/', id);
     }
     this.view.render();
+    this.view.hideCurrentResultStorie();
     this.showCurrentPlayerWithVotes();
     this.listPlayersWithVotes();
     this.lisStories();
@@ -211,6 +212,7 @@ export default class RoomController implements Controller {
       started: true,
     });
     this.room.round = round;
+    this.view.hideCurrentResultStorie();
     await this.service.upsert(this.room);
   }
 
@@ -337,9 +339,13 @@ export default class RoomController implements Controller {
       });
       this.setDefaultIfCurrentPlayerNotVote();
       this.view.closeCardsDeck();
+      this.showGraphAndResults();
       this.view.hideConfirm();
-      // TODO: Mostrar estimativas
     });
+  }
+
+  private showGraphAndResults () {
+    this.view.showStorieResultAndGraph(this.room);
   }
 
   private listenForTimer (): void {

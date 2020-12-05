@@ -13,7 +13,7 @@ declare type CardTotal = {
 }
 
 export default class ChartGeneratorService {
-  public renderChart (idCanvas: string, room: Room, isEndGame: boolean = false) {
+  public renderChart (idCanvas: string, room: Room, title: string, fontSize: number, isEndGame: boolean = false) {
     let graphDataCards: Array<GraphData> = [];
     if (isEndGame) {
       const cards: Array<Card> = [];
@@ -44,14 +44,14 @@ export default class ChartGeneratorService {
         maintainAspectRatio: true,
         title: {
           display: true,
-          fontSize: 35,
+          fontSize: fontSize,
           fontStyle: 'normal',
-          text: 'Resultado jogadas %',
+          text: title,
           fontColor: 'black',
         },
         plugins: {
           colorschemes: {
-            scheme: 'brewer.OrRd4',
+            scheme: 'brewer.Paired12',
           },
         },
       },

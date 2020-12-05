@@ -4,8 +4,17 @@
   background-size: cover;
   background-attachment: fixed;
   backdrop-filter: brightness(0.6);
+
+  .card-panel {
+    position: relative;
+  }
+
   #modal-register {
     max-width: 530px;
+  }
+
+  #modal-preferences {
+    max-width: 300px;
   }
 
   .container {
@@ -53,6 +62,12 @@
     margin-left: 20px;
   }
 
+  #btn-preferences {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+  }
+
   .materialize-textarea {
     min-height: 90px;
     line-height: 1.5;
@@ -79,9 +94,31 @@
   pre {
     margin: 0;
   }
+
+  .radio-wrapper {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    margin-top: 0;
+    label:last-child {
+      margin-left: 30%
+    }
+  }
+
 }
 
 .collapsible.popout > li {
   margin: 0 10px;
   box-shadow: none;
+}
+
+.radio-label {
+  position: sticky !important;
+}
+
+.tooltip {
+  vertical-align: middle;
+  color: #26a69a;
+  font-size: 20px !important;
+  margin-left: 10px;
 }

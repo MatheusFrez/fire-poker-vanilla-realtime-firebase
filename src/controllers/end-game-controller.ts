@@ -27,7 +27,9 @@ export default class EndGameController implements Controller {
     this.view.render();
     this.view.onDownloadResults(() => this.downloadResults());
     this.view.generateCollapsible(this.room?.estimatedUserStories ?? []);
-    this.renderChart();
+    if (this.room.estimatedUserStories) {
+      this.renderChart();
+    }
   }
 
   private renderChart () {

@@ -131,4 +131,42 @@
       background: #64b5f6 !important;
     }
   }
+
+  .collapsible {
+    box-shadow: none;
+    border: none;
+    .collapsible-header, .collapsible-body {
+      background: transparent;
+      box-shadow: none;
+      border: none;
+    }
+    .collapsible-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .collapsible-body {
+      padding-bottom: 2px;
+    }
+
+    #arrow-collapsible {
+      transition: all .5s ease-out;
+      &.transition {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  #input-link {
+    all: unset;
+    border: 1px solid gray;
+    border-radius: 4px;
+    padding: 2px;
+    width: 100%;
+  }
+
+  #btn-copy {
+    vertical-align: middle;
+  }
 }

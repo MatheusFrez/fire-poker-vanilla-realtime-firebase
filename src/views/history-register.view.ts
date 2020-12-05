@@ -65,7 +65,7 @@ export default class HistoryRegisterView extends View {
         <form class="col s12" id="form">
           <div class="row">
             <div class="input-field col s12">
-              <input id="input_timeout" type="text" value="60">
+              <input id="input_timeout" type="number" value="60">
               <label for="input_timeout">Timeout da sala em segundos</label>
             </div>
             <span>Deck</span><br>

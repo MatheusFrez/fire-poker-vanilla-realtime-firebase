@@ -1,5 +1,5 @@
 import View from './view';
-import { Tooltip } from 'materialize-css';
+import { Collapsible, Tooltip } from 'materialize-css';
 import Card from '../models/card';
 import { cardDeck, cardUserHistory } from '../components/card';
 import Player from '../models/player';
@@ -39,6 +39,7 @@ export default class RoomView extends View {
             </div>
             <div class="col">
               <div class="player-container">
+              <button class="waves-effect waves-light btn red accent-4" id="btn-leave">SAIR</button>
                 <div class="player-header">
                   <h6>Jogadores:</h6>
                   ${timer()}
@@ -48,6 +49,23 @@ export default class RoomView extends View {
                   <tbody id="tbody"></tbody>
                 </table>
                 <div class="button-wrapper"></div>
+                <ul class="collapsible">
+                <li>
+                  <div class="collapsible-header"><h6>Convite um colega</h6><i class="material-icons" id="arrow-collapsible">keyboard_arrow_down</i></div>
+                  <div class="collapsible-body">
+                    <div class="row">
+                      <div class="col s10">
+                        <input type="text" id="input-link">
+                      </div>
+                      <div class="col s2">
+                        <span class="material-icons" id="btn-copy">
+                          content_copy
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              </ul>
               </div>
               <div class="col">
                 <section class="cards-history-container" id="histories-wrapper"></section>
@@ -58,6 +76,18 @@ export default class RoomView extends View {
       </div>
     `;
   };
+
+  protected setup (): void {
+    Collapsible.init(document.querySelectorAll('.collapsible'), {
+      onOpenStart: () => {
+        this.toggleArrow();
+      },
+      onCloseStart: () => {
+        this.toggleArrow();
+      },
+    });
+    this.initializeLink();
+  }
 
   public generateCardsDeck (deck: Deck, onCheck: Function): void {
     document.querySelectorAll('.stack').forEach((element: Element, index: number) => {
@@ -217,6 +247,10 @@ export default class RoomView extends View {
     this.showBtnInWrapper('Terminar', 'finish', onClick);
   }
 
+  public showRepeat (onClick: any): void {
+    this.showBtnInWrapper('Repetir história', 'repeat', onClick);
+  }
+
   public showLoader (message: string): void {
     document.body.insertAdjacentHTML('afterbegin', loader(message));
   }
@@ -229,6 +263,26 @@ export default class RoomView extends View {
     document.querySelectorAll('.check').forEach((element) => {
       element.classList.remove('check');
     });
+  }
+
+  public onLeave (callback: any): void {
+    document.getElementById('btn-leave')
+      .addEventListener('click', callback);
+  }
+
+  private toggleArrow (): void {
+    document.getElementById('arrow-collapsible').classList.toggle('transition');
+  }
+
+  private initializeLink (): void {
+    const input = document.getElementById('input-link') as HTMLInputElement;
+    input.value = window.location.href;
+    document.getElementById('btn-copy')
+      .addEventListener('click', () => {
+        input.focus();
+        input.select();
+        document.execCommand('copy');
+      });
   }
 
   private get btnWrapper (): HTMLButtonElement {

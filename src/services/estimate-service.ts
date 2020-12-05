@@ -1,3 +1,4 @@
+import Room from '../models/room';
 import Vote from '../models/vote';
 
 export type AgruppedEstimate = {
@@ -18,11 +19,11 @@ export default class EstimateSingletonService {
     return this.instance;
   }
 
-  public calculateEstimate (attempt:number, votes: Vote[]): number {
+  public calculateEstimate (room: Room): number {
     let storyPointsDistanceLimit = 5;
-    const totalEstimates: Estimate[] = this.formatArrTotalEstimate(votes);
+    const totalEstimates: Estimate[] = this.formatArrTotalEstimate(room.round.votes);
 
-    if (attempt === 3) {
+    if (room.round.attempts === 3) {
       const amountPerEstimates = totalEstimates.reduce((acc, value) => {
         const index = acc.findIndex((perEstimate: AgruppedEstimate) => perEstimate.estimate === value.estimate);
         index >= 0 ? acc[index].amount++ : acc.push({ estimate: value.estimate, amount: 1 });
@@ -38,21 +39,21 @@ export default class EstimateSingletonService {
       }
     }
 
-    if (attempt === 2) {
+    if (room.round.attempts === 2) {
       storyPointsDistanceLimit = 25;
     }
 
     if (this.isNearVotes(totalEstimates, storyPointsDistanceLimit)) {
-      const media = Math.ceil(totalEstimates.reduce((acc, value) => acc + value.estimate, 0) / totalEstimates.length);
-      return media;
-
-      // const maior = Math.max(...totalEstimates.map(value => value.estimate));
-      // return maior;
+      if (room.settings.estimateType === 'average') {
+        return Math.ceil(totalEstimates.reduce((acc, value) => acc + value.estimate, 0) / totalEstimates.length);
+      } else {
+        return this.getMaxValueProperty(totalEstimates as AgruppedEstimate[], 'estimate');
+      };
     }
     return 0;
   }
 
-  private isNearVotes (array: any[], limite: number): boolean {
+  private isNearVotes (array: Estimate[], limite: number): boolean {
     return !array.some((value) => Math.abs(array[0].estimate - value.estimate) >= limite);
   }
 
@@ -67,20 +68,4 @@ export default class EstimateSingletonService {
       };
     }).filter(value => value.estimate);
   }
-
-  // public async leaveRoom (): Promise<void> {
-  //   const idPlayer = localStorage.getItem(this.PLAYER_ITEM);
-  //   const roomId = localStorage.getItem(this.ROOM_ITEM);
-  //   const room = await this.service.findById(roomId);
-
-  //   room.players.splice(room.players.findIndex((value) => value.id === idPlayer));
-  //   this.service.upsert(room);
-
-  //   this.clearStoreGameInfo();
-  //   router.push('/');
-  // }
-
-  // public clearStoreGameInfo (): void {
-  //   localStorage.clear();
-  // }
 }

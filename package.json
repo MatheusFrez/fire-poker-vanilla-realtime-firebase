@@ -58,6 +58,9 @@
     "last 3 safari versions"
   ],
   "dependencies": {
+    "chart.js": "^2.9.4",
+    "chartjs-plugin-colorschemes": "^0.4.0",
+    "file-saver": "^2.0.5",
     "firebase": "^8.1.1",
     "materialize-css": "^1.0.0",
     "rxjs": "^6.6.3",

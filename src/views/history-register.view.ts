@@ -1,4 +1,4 @@
-import { Collapsible, Modal, updateTextFields } from 'materialize-css';
+import { Collapsible, Modal, Tooltip, updateTextFields } from 'materialize-css';
 import Sortable from 'sortablejs';
 
 import View from './view';
@@ -19,6 +19,9 @@ export default class HistoryRegisterView extends View {
               <button class="btn-floating waves-effect waves-light center-align" id="btn-add">
                 <i class="material-icons">add</i>
               </button>
+              <button class="btn-floating waves-effect waves-light center-align" id="btn-preferences">
+              <i class="material-icons">room_preferences</i>
+            </button>
             </div>
           </div>
           <ul class="collapsible expandable popout" id="collapsible"></ul>
@@ -32,7 +35,8 @@ export default class HistoryRegisterView extends View {
           </div>
         </div>
       </div>
-      <!-- Modal Structure -->
+
+      <!-- Modal Register Structure -->
       <div id="modal-register" class="modal">
         <div class="modal-content">
           <form class="col s12" id="form">
@@ -55,7 +59,51 @@ export default class HistoryRegisterView extends View {
           <button id="btn-confirmation-modal" class="waves-effect waves-teal btn-flat">Confirmar</button>
         </div>
       </div>
+      <!-- Modal Preferences Structure -->
+      <div id="modal-preferences" class="modal">
+      <div class="modal-content">
+        <form class="col s12" id="form">
+          <div class="row">
+            <div class="input-field col s12">
+              <input id="input_timeout" type="text" value="60">
+              <label for="input_timeout">Timeout da sala em segundos</label>
+            </div>
+            <span>Deck</span><br>
+            <div class="input-field col s12 radio-wrapper">
+              <label class="radio-label">
+                <input class="with-gap" name="decktype" value="mixed" type="radio" checked />
+                <span>Misto</span>
+              </label>
+              <label class="radio-label">
+                <input class="with-gap" name="decktype" value="fibonacci" type="radio" />
+                <span>Fibonacci</span>
+            </label>
+          </div>
+          <span>Estimativa</span><span class="material-icons tooltip tooltipped" data-position="top" data-tooltip="Define se a estimativa será por média dos valores ou o maior deles">
+          help
+          </span>
+            <div class="input-field col s12 radio-wrapper">
+              <label class="radio-label">
+                <input class="with-gap" name="estimatetype" value="higher" type="radio" checked />
+                <span>Maior</span>
+              </label>
+              <label class="radio-label">
+                <input class="with-gap" name="estimatetype" value="average" type="radio" />
+                <span>Média</span>
+            </label>
+          </div>
+
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-cancel-preferences" class="waves-effect waves-teal btn-flat">Cancelar</button>
+        <button id="btn-confirmation-preferences" class="waves-effect waves-teal btn-flat">Confirmar</button>
+      </div>
     </div>
+  </div>
+    </div>
+
     `;
   }
 
@@ -64,8 +112,12 @@ export default class HistoryRegisterView extends View {
       dismissible: false,
     });
     Collapsible.init(document.querySelectorAll('.collapsible.expandable'));
+    Tooltip.init(document.querySelectorAll('.tooltipped'), {});
     this.onClickAdd();
     this.onCancelForm();
+    this.onClickPreferences();
+    this.onCloseModalPreferences();
+    updateTextFields();
     this.preventFormDefault();
   }
 
@@ -87,6 +139,14 @@ export default class HistoryRegisterView extends View {
   public onConfirme (callback: any) :void {
     document.getElementById('btn-confirmation')
       .addEventListener('click', callback);
+  }
+
+  public onSavePreferences (callback: any) {
+    document.getElementById('btn-confirmation-preferences')
+      .addEventListener('click', () => {
+        callback();
+        this.modalPreferences.close();
+      });
   }
 
   public listUserStories (
@@ -153,6 +213,10 @@ export default class HistoryRegisterView extends View {
     updateTextFields();
   }
 
+  private closeModalPreferences (): void {
+    this.modalPreferences.close();
+  }
+
   public showNameError (error: string): void {
     this.nameErrorElement.innerText = error;
     this.nameInput.classList.add('invalid');
@@ -184,6 +248,20 @@ export default class HistoryRegisterView extends View {
     document.getElementById('btn-cancel-modal')
       .addEventListener('click', () => {
         this.closeForm();
+      });
+  }
+
+  private onClickPreferences (): void {
+    document.getElementById('btn-preferences')
+      .addEventListener('click', () => {
+        this.modalPreferences.open();
+      });
+  }
+
+  private onCloseModalPreferences (): void {
+    document.getElementById('btn-cancel-preferences')
+      .addEventListener('click', () => {
+        this.closeModalPreferences();
       });
   }
 
@@ -219,6 +297,22 @@ export default class HistoryRegisterView extends View {
 
   private get modal (): Modal {
     return Modal.getInstance(document.getElementById('modal-register'));
+  }
+
+  private get modalPreferences (): Modal {
+    return Modal.getInstance(document.getElementById('modal-preferences'));
+  }
+
+  public get timeOutInput (): HTMLInputElement {
+    return document.getElementById('input_timeout') as HTMLInputElement;
+  }
+
+  public get deckRadioValue (): string {
+    return (document.querySelector('input[name="decktype"]:checked') as HTMLInputElement).value;
+  }
+
+  public get estimateTypeValue (): string {
+    return (document.querySelector('input[name="estimatetype"]:checked') as HTMLInputElement).value;
   }
 
   private get form (): HTMLFormElement {

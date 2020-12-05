@@ -9,11 +9,14 @@ import { RoleType } from '../models/role-type';
 import toast from '../common/toast';
 import { PLAYER_ITEM, ROOM_ITEM } from '../common/constants';
 
+import getDeckByName from '../common/decks';
+import Settings from '../models/settings';
 export default class HistoryRegisterController implements Controller {
   private view: HistoryRegisterView;
   private userStories: UserStory[];
   private playerName: string;
   private roomName: string
+  private settings: Settings;
 
   constructor () {
     this.view = new HistoryRegisterView();
@@ -31,6 +34,7 @@ export default class HistoryRegisterController implements Controller {
     this.view.onPutStory(this.putUserStory.bind(this));
     this.view.onConfirme(this.handleCreateRoom.bind(this));
     this.view.onOrderChange(this.onOrderChange.bind(this));
+    this.view.onSavePreferences(this.savePreferences.bind(this));
     this.listUserStories();
   }
 
@@ -137,6 +141,7 @@ export default class HistoryRegisterController implements Controller {
       finished: false,
       pendingUserStories: this.userStories,
       players: [admin],
+      settings: this.settings,
     });
     this.view.showLoader('Criando sala...');
     const roomService = RoomSingletonService.getInstance();
@@ -144,5 +149,13 @@ export default class HistoryRegisterController implements Controller {
     this.view.hideLoader();
     this.storeGameInfo(admin.id, room.id);
     router.push(`/room/${room.id}`);
+  }
+
+  private savePreferences (): void {
+    this.settings = new Settings({
+      deck: getDeckByName(this.view.deckRadioValue),
+      timeout: Number(this.view.timeOutInput.value),
+      estimateType: this.view.estimateTypeValue,
+    });
   }
 }

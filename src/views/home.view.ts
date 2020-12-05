@@ -71,6 +71,10 @@ export default class HomeView extends View {
     return this.roomInput.value.trim();
   }
 
+  public set roomName (value: string) {
+    this.roomInput.value = value.trim();
+  }
+
   private get playerInput (): HTMLInputElement {
     return document.getElementById('player_name') as HTMLInputElement;
   }

@@ -1,0 +1,246 @@
+$breakpoint: 580px;
+$card-height: 45vw;
+$card-height-mobile: 36vw;
+$card-max-height: 180px;
+
+ul.card-stacks {
+  width: 550px;
+  list-style-type: none;
+  margin: 0 auto 20px;
+  padding: 0;
+  position: relative;
+  cursor: pointer;
+  height: $card-height;
+  max-height: $card-max-height;
+  transition-duration: 0.9s;
+  transition-timing-function: ease-in-out;
+  transition-property: height, max-height;
+
+  @media screen and (max-width: $breakpoint) {
+    width: 100vw;
+    height: $card-height-mobile;
+  }
+
+  li.stack {
+    position: absolute;
+    left: 40%;
+    top: 0px;
+    transition: all 0.4s cubic-bezier(.63,.15,.03,1.02);
+
+    ul.cards-down {
+      position: relative;
+      margin: 0 0 20px;
+      padding: 20px;
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+
+      li.card {
+        transition: all 0.4s cubic-bezier(.63,.15,.03,1.22);
+        left: 0px;
+        transition-delay: 0.4s;
+        background: #FFF;
+        overflow: hidden;
+        height: fit-content;
+        width: fit-content;
+        border-radius: 7px;
+        position: absolute;
+        top: 0px;;
+        box-shadow: 6px 2px 2px 0 rgba(0, 0, 0, 0.2);
+
+        div.content{
+          padding: 5px 10px;
+        }
+
+        &.card-1{
+          z-index: 10; transform: rotateZ(-2deg);
+        }
+
+        &.card-2{
+          z-index: 9; transform: rotateZ(-7deg);
+        }
+
+        &.card-3{
+          z-index: 8; transform: rotateZ(5deg);
+        }
+      }
+    }
+  }
+
+  &.transition {
+    height: calc(#{$card-height} * 4.5);
+    max-height: calc(#{$card-max-height} * 4.5);;
+
+    li.stack {
+      &.stack-1 {
+        left: 0;
+
+        @media screen and (max-width: $breakpoint) {
+          left: 3vw;
+        }
+      }
+
+      &.stack-2 {
+        left: 25%;
+
+        @media screen and (max-width: $breakpoint) {
+          left: 27vw;
+        }
+      }
+
+      &.stack-3 {
+        left: 50%;
+
+        @media screen and (max-width: $breakpoint) {
+          left: 51vw;
+        }
+      }
+
+      &.stack-4 {
+        left: 75%;
+
+        @media screen and (max-width: $breakpoint) {
+          left: 75vw;
+        }
+      }
+
+      ul.cards-down {
+        li.card {
+          transform: rotateZ(0deg);
+
+          &.card-1 {
+            top: 400px;
+          }
+
+          &.card-2 {
+            top: 200px;
+          }
+
+          &.card-3 {
+            top: 600px;
+          }
+
+          &.card-4 {
+            left: 70px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.card {
+  margin: 0;
+  background: #eeeae7;
+  height: $card-height;
+  max-height: $card-max-height;
+  max-width: 120px;
+  transition: all ease-in 0.3s;
+  width: 32vw;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  @media screen and (max-width: $breakpoint) {
+    width: 23vw;
+    height: $card-height-mobile;
+  }
+}
+
+.card__face {
+  top: 0;
+  position: absolute;
+}
+
+.card__face--btm {
+  bottom: 0;
+  right: 0;
+  transform: rotate(180deg);
+}
+
+.card__value {
+  display: block;
+  text-align: center;
+  width: 22px;
+  margin: 8px;
+}
+
+.card__suit {
+  display: block;
+  margin-top: 0.5rem;
+}
+
+.card__value__center {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  align-items: center;
+  margin: 0;
+}
+
+.cards-history-container {
+  position: relative;
+  width: 350px;
+  z-index: 1;
+  height: 250px;
+  margin: 0 auto;
+  display: flex;
+  justify-self: center;
+  align-items: center;
+}
+
+$itemsCount: 6;
+
+.card-history {
+  position: absolute;
+  width: 300px;
+  height: 200px;
+  background-color: #EDEBD7;
+  border: 1px solid #423E37;
+  box-shadow: 9px 11px 3px 0px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  padding: 10px;
+  transition: transform 0.3s, opacity 0.2s;
+
+  h4 {
+    font-size: 1.4rem;
+    margin: 0;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  &.hidden {
+    z-index: 100;
+    background-color: #fff;
+    color: #fff;
+    opacity: 0;
+    transition: color 0.5s, background-color 0.5s, transform 1s, opacity 0.2s 0.2s;
+
+    h1 {
+      color: #fff;
+      transition: color 0.5s
+    }
+
+    @for $i from 1 through $itemsCount {
+      &:nth-of-type(#{$i}) {
+        transform: rotate(random(100) - 100 + deg) translateX((random(1) + 100) * 1%) translateY(random(60) * -1%) scale(random(10)*0.1) skewX(random(12) + deg) skewY(random(12) + deg);
+      }
+    }
+
+  }
+
+  @for $i from 1 through $itemsCount {
+    $zIndexStartValue: $itemsCount + 1;
+    $xValue: ($i - 1) * 5px;
+    $yValue: ($i - 1) * 5px;
+    $zIndexValue: $itemsCount - $i;
+
+    &:nth-of-type(#{$i}) {
+      z-index: $zIndexValue;
+      transform: translateX(#{$xValue}) translateY(#{$yValue});
+    }
+  }
+}

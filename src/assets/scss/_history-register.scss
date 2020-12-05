@@ -1,4 +1,9 @@
 #history-register {
+  background-image: url('../img/bg1.png');
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
+  backdrop-filter: brightness(0.6);
   #modal-register {
     max-width: 530px;
   }

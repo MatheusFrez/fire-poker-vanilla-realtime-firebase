@@ -18,13 +18,13 @@ export default class Router {
     this.bindAnchorNavigate();
   }
 
-  public push (path: string): void {
+  public push (path: string, data?: any): void {
     const finded = this.routes.some((route) => {
       const match = path.match(route.path);
       if (match) {
         match.shift();
-        this._push(path);
-        route.callback(...match);
+        this._push(path, data);
+        route.callback(...match, data);
         return true;
       }
       return false;
@@ -57,7 +57,7 @@ export default class Router {
     });
   }
 
-  private _push (path: string): void {
-    history.pushState(null, null, path);
+  private _push (path: string, data?: any): void {
+    history.pushState(data, null, path);
   }
 }

@@ -21,14 +21,16 @@ export default class Room {
     settings?: Settings,
     players: Array<Player>,
     pendingUserStories: Array<UserStories>,
+    estimatedUserStories?: Array<UserStories>;
     round?: Round,
   }) {
     this.id = params.id || randomKey(params.title);
     this.title = params.title;
     this.finished = params.finished;
     this.settings = params.settings || new Settings();
-    this.players = params.players;
+    this.players = params.players || [];
     this.pendingUserStories = params.pendingUserStories;
+    this.estimatedUserStories = params.estimatedUserStories || [];
     this.round = params.round;
   }
 }

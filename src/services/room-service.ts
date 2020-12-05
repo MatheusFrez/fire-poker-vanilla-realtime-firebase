@@ -2,6 +2,8 @@ import Room from '../models/room';
 import { fireDb } from '../plugins/firebase';
 import { Observable } from 'rxjs';
 import toSimpleJson from '../common/simple-json';
+import Round from '../models/round';
+import Vote from '../models/vote';
 
 export default class RoomSingletonService {
   private static instance: RoomSingletonService;
@@ -21,7 +23,10 @@ export default class RoomSingletonService {
     if (!value) {
       return null;
     }
-    return new Room(value);
+    return new Room({
+      ...value,
+      round: this.getRound(value.round),
+    });
   }
 
   public async list (): Promise<Array<Room>> {
@@ -47,16 +52,30 @@ export default class RoomSingletonService {
 
   public listenCollection (id: string, field: string): Observable<any> {
     try {
-      return Observable.create(
+      return new Observable(
         (observer) => {
           fireDb.ref(`${this.collection}/${id}/`)
             .child(field)
             .on('value', (snap) => {
-              observer.next({ [snap.key]: snap.val() });
+              observer.next(snap.val());
             });
         },
       );
     } catch (e) {
     }
+  }
+
+  private getRound (round: any): Round {
+    if (!round) {
+      return null;
+    }
+    const votes: Vote[] = [];
+    for (const key in round.votes) {
+      votes.push(new Vote(round.votes[key]));
+    }
+    return new Round({
+      ...round,
+      votes,
+    });
   }
 }

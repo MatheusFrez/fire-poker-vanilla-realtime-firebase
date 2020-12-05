@@ -1,9 +1,9 @@
 import Card from '../models/card';
 import UserStory from '../models/user-story';
 
-export function cardDeck (card: Card, index: number): string {
+export function cardDeck (card: Card): string {
   return `
-  <div class='card' id=${index}>
+  <div class='card'>
     <h3 class="card__value__center">
       ${card.symbol}
       </h3>

@@ -28,7 +28,7 @@
   }
 
   .cards {
-    margin: 0 auto;
+    margin: 25px auto 0 auto;
   }
 
   .player-container {
@@ -55,49 +55,4 @@
       background: #64b5f6 !important;
     }
   }
-
-  .cards-container-wrapper {
-    width: fit-content;
-    height: 85vh;
-    overflow-x: scroll;
-    display: flex;
-    flex-wrap: wrap;
-  }
-
-  .cards-container-wrapper .card {
-    margin: 7px;
-  }
-
-  #timer-count-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #EDEBD7;
-    border: 1px solid #423E37;
-    padding: 5px;
-    box-shadow: 9px 11px 3px 0px rgba(0, 0, 0, 0.2);
-    h5 {
-      margin:0;
-    }
-  }
-
-  #backdrop {
-    position: fixed;
-    z-index: 1000000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgb(0,0,0);
-    background-color: rgba(0,0,0,0.9);
-    #btn-begin {
-      left: 40%;
-      top: 50%;
-      height: 8vh;
-      width: 20vw;
-    }
-  }
-
-
 }

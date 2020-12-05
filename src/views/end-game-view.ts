@@ -30,6 +30,7 @@ export default class EndGameView extends View {
 
   protected setup (): void {
     Collapsible.init(document.querySelectorAll('.collapsible'), { accordion: false });
+    this.onPrintResults();
   }
 
   public onDownloadResults (callback: any): void {
@@ -37,15 +38,15 @@ export default class EndGameView extends View {
       .addEventListener('click', callback);
   }
 
-  public onPrintResults (callback: any): void {
+  public onPrintResults (): void {
     document.querySelector('#btn-imprimir-json')
-      .addEventListener('click', callback);
+      .addEventListener('click', this.printResults);
   }
 
   public generateCollapsible (userStories: any[]): void {
     const collapseElement = document.getElementById('collapsible');
     collapseElement.innerHTML = '';
-    (userStories || []).forEach((userStory, index) => {
+    (userStories ?? []).forEach((userStory, index) => {
       const element = document.createElement('li');
       element.innerHTML = `
       <div class="collapsible-header">
@@ -79,5 +80,15 @@ export default class EndGameView extends View {
 
       collapseElement.appendChild(element);
     });
+  }
+
+  private printResults () {
+    const callapsibleElement = document.querySelector('#collapsible');
+    const element = callapsibleElement.childNodes;
+    element.forEach((value, index) => {
+      const instance = Collapsible.getInstance(callapsibleElement);
+      instance.open(index);
+    });
+    setTimeout(() => window.print(), 500);
   }
 }

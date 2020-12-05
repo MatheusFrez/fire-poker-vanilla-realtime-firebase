@@ -3,9 +3,9 @@ import RoomSingletonService from '../services/room-service';
 import Controller from './controller';
 import Room from '../models/room';
 import { saveAs } from 'file-saver';
-import { Collapsible } from 'materialize-css';
 import 'chartjs-plugin-colorschemes';
 import ChartGeneratorService from '../services/chart-generator-service';
+import router from '../router';
 
 export default class EndGameController implements Controller {
   private view: EndGameView;
@@ -16,30 +16,22 @@ export default class EndGameController implements Controller {
     this.view = new EndGameView();
     this.service = RoomSingletonService.getInstance();
     this.graphGeneratorService = new ChartGeneratorService();
-    setTimeout(() => {
-      this.view.onDownloadResults(() => this.downloadResults());
-      this.view.onPrintResults(() => this.printResults());
-    }, 2000);
   }
 
   public async init (id: string) :Promise<void> {
     this.room = await this.service.findById(id);
+    if (!this.room?.finished) {
+      // TO DO colocar um toast se a sala n existe ou não foi finalizada ainda 2 toasts diferentes
+      return router.push('/');
+    }
     this.view.render();
-    this.view.generateCollapsible(this?.room?.estimatedUserStories ?? []);
+    this.view.onDownloadResults(() => this.downloadResults());
+    this.view.generateCollapsible(this.room?.estimatedUserStories ?? []);
     this.renderChart();
   }
 
   private renderChart () {
     this.graphGeneratorService.renderChart('result-chart', this.room);
-  }
-
-  private printResults () {
-    const element = document.querySelector('#collapsible');
-    this.room.estimatedUserStories.forEach((value, index) => {
-      const instance = Collapsible.getInstance(element);
-      instance.open(index);
-    });
-    setTimeout(() => window.print(), 500);
   }
 
   private downloadResults () {

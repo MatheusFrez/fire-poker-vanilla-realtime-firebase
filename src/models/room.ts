@@ -21,7 +21,6 @@ export default class Room {
     settings?: Settings,
     players: Array<Player>,
     pendingUserStories: Array<UserStories>,
-    estimatedUserStories?: Array<UserStories>;
     round?: Round,
     estimatedUserStories?: Array<UserStories>,
   }) {

@@ -31,7 +31,7 @@ export default class EndGameController implements Controller {
   }
 
   private renderChart () {
-    this.graphGeneratorService.renderChart('result-chart', this.room);
+    this.graphGeneratorService.renderChart('result-chart', this.room, true);
   }
 
   private downloadResults () {

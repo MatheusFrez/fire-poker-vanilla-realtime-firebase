@@ -1,4 +1,5 @@
 import Chart from 'chart.js';
+import Card from '../models/card';
 import Room from '../models/room';
 
 declare type GraphData = {
@@ -12,8 +13,17 @@ declare type CardTotal = {
 }
 
 export default class ChartGeneratorService {
-  public renderChart (idCanvas: string, room: Room) {
-    const graphDataCards: Array<GraphData> = this.generateGraphData(room);
+  public renderChart (idCanvas: string, room: Room, isEndGame: boolean = false) {
+    let graphDataCards: Array<GraphData> = [];
+    if (isEndGame) {
+      const cards: Array<Card> = [];
+      room.estimatedUserStories.forEach(estimatedStorie => estimatedStorie.votes.forEach(vote => vote.cards.forEach(card => cards.push(card))));
+      graphDataCards = this.generateGraphData(cards);
+    } else {
+      const cards: Array<Card> = [];
+      room.round.votes.forEach(vote => vote.cards.forEach(card => cards.push(card)));
+      graphDataCards = this.generateGraphData(cards);
+    }
     const data = {
       datasets: [{
         data: graphDataCards.map(cardResult => cardResult.percent),
@@ -48,17 +58,13 @@ export default class ChartGeneratorService {
     });
   }
 
-  private generateGraphData (room: Room): Array<GraphData> {
+  private generateGraphData (cards: Array<Card>): Array<GraphData> {
     const cardsTotal: Array<CardTotal> = [];
     const cardsResult: Array<GraphData> = [];
-    room.estimatedUserStories.forEach(storie => {
-      (storie.votes || []).forEach(vote => {
-        vote.cards.forEach(card => {
-          const indexCard: number = cardsTotal.findIndex(cardTotal => cardTotal.card === card.symbol);
-          if (indexCard === -1) cardsTotal.push({ card: card.symbol, quantityPlayersUsed: 1 });
-          else cardsTotal[indexCard].quantityPlayersUsed += 1;
-        });
-      });
+    cards.forEach(card => {
+      const indexCard: number = cardsTotal.findIndex(cardTotal => cardTotal.card === card.symbol);
+      if (indexCard === -1) cardsTotal.push({ card: card.symbol, quantityPlayersUsed: 1 });
+      else cardsTotal[indexCard].quantityPlayersUsed += 1;
     });
 
     const quantityTotalUseCard: number = cardsTotal.reduce((total, card) => total + card.quantityPlayersUsed, 0);

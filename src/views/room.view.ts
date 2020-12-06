@@ -114,12 +114,12 @@ export default class RoomView extends View {
   }
 
   public hideCurrentResultStorie (): void {
-    document.querySelector('#result-container').classList.remove('visible');
-    document.querySelector('#result-container').classList.add('hidden');
+    document.querySelector('#result-container').classList.remove('visible-element');
+    document.querySelector('#result-container').classList.add('hidden-element');
   }
 
   public showCurrentResultStorie (): void {
-    document.querySelector('#result-container').classList.add('visible');
+    document.querySelector('#result-container').classList.add('visible-element');
   }
 
   public removeResultAndGraph () {

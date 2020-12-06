@@ -6,6 +6,7 @@
   backdrop-filter: brightness(0.6);
   height: 100vh;
   overflow-y: auto;
+  overflow-x: hidden;
   box-sizing: border-box;
 
   #result-container {
@@ -16,8 +17,6 @@
     box-shadow: 9px 11px 3px 0px rgba(0, 0, 0, 0.2);
     padding: 20px;
     animation: fadeIn 3s;
-    animation-delay: 5s;
-    animation-fill-mode: forwards;
   }
 
   @keyframes fadeIn {
@@ -35,7 +34,6 @@
 
   .custom-card {
     margin: 0;
-    background: #eeeae7;
     height: auto;
     max-height: 180px;
     max-width: 320px;
@@ -169,4 +167,15 @@
   #btn-copy {
     vertical-align: middle;
   }
+
+  #no-consensus {
+    display: none;
+    margin-top: 0;
+    color: red;
+  }
+
+  #canvas-wrapper {
+    margin-top: 20px;
+  }
+
 }

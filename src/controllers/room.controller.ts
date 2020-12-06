@@ -290,16 +290,16 @@ export default class RoomController implements Controller {
     this.room.round.finished = true;
     this.room.round.timeRemaining = this.room.settings.timeout;
     await this.service.upsert(this.room);
-    // TODO: Verificar concenso
     const estimate = this.estimateService.calculateEstimate(this.room);
     if (estimate > 0) {
       this.room.round.result = estimate;
       await this.movePendingToEstimated();
     } else {
-      toast('Não houve um consenso entre os votos');
+      this.view.showStatusConsensus();
       this.room.round.attempts++;
       return this.view.showRepeat(this.nextRound.bind(this));
     }
+    this.view.updateEstimate(estimate);
     if (!this.room.pendingUserStories.length) {
       this.view.showFinish(this.finishGame.bind(this));
     } else {

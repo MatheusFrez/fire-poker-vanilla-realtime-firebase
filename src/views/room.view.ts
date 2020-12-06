@@ -167,7 +167,7 @@ export default class RoomView extends View {
     const cardsNotEspecial: Array<Card> = round.votes.map(vote => vote.cards.filter(card => !card.isSpecial).map(card => card))[0];
     const quantityCardsNotEspecial: number = cardsNotEspecial.length;
     const totalValueCardsNotEspecial: number = cardsNotEspecial.reduce((total, card) => total + card.value, 0);
-    const averageCardsEspecialValue: number = Math.round(totalValueCardsNotEspecial / quantityCardsNotEspecial);
+    const averageCardsEspecialValue: number = Math.round(totalValueCardsNotEspecial / quantityCardsNotEspecial) || 0;
 
     const cardElement = document.getElementById('result-container');
 
@@ -175,12 +175,14 @@ export default class RoomView extends View {
         <div id="card-storie">
           <div class="custom-card">
             <div class="flex center">
-              <span class="card-title"><i><b>${round?.userStory?.name ?? ''}</b></i></span>
-              <span class="card-title" style="margin-left: 10px;"><b>Estimativa:</b> ${round?.userStory?.result ?? 0}</span>
+              <h5 id="no-consensus">Não houve consenso</h5>
+                <h6 class="card-title"><i><b>${round?.userStory?.name ?? ''}</b></i></h6>
+                <span><i>${round?.userStory?.description ?? ''}</i></span><br>
+              <b>Estimativa:</b>
+              <span class="card-title" id="estimate-value">${round?.result ?? 0}</span>
             </div>
             <div class="center" id="limited-text">
               <span class="card-title" style="margin-left: 10px;"><b>Média de cartas:</b> ${averageCardsEspecialValue}</span><br>
-              <span><i>${round?.userStory?.description ?? ''}</i></span>
               <hr>
               ${round?.votes.map((vote) => {
               return `
@@ -203,7 +205,7 @@ export default class RoomView extends View {
             </div>
           </div>
         </div>
-        <div class="row">
+        <div class="row" id="canvas-wrapper">
           <canvas id="result-chart-round"></canvas>
         </div>
    `;
@@ -283,6 +285,19 @@ export default class RoomView extends View {
         input.select();
         document.execCommand('copy');
       });
+  }
+
+  public showStatusConsensus (): void {
+    document.getElementById('no-consensus').style.display = 'block';
+  }
+
+  public updateEstimate (estimate: number): void {
+    const element = document.getElementById('estimate-value');
+    if (estimate <= 0) {
+      element.textContent = 'Não houve consenso';
+    } else {
+      element.textContent = estimate.toString();
+    }
   }
 
   private get btnWrapper (): HTMLButtonElement {

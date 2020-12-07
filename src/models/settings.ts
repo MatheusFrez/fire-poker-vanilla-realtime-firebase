@@ -1,17 +1,18 @@
 import { mixedDeck } from '../common/decks';
 import Deck from './deck';
 
+type EstimateType = 'higher' | 'average';
 export default class Settings {
   public id?: string;
   public timeout: number;
   public deck: Deck;
-  public estimateType?: string
+  public estimateType?: EstimateType;
 
   constructor (params?: {
     id?: string,
     timeout?: number,
     deck?: Deck,
-    estimateType?: string
+    estimateType?: EstimateType
   }) {
     this.id = params?.id;
     this.timeout = params?.timeout || 60;

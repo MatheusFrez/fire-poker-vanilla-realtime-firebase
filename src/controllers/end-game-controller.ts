@@ -12,6 +12,7 @@ export default class EndGameController implements Controller {
   private service: RoomSingletonService;
   private room: Room;
   private graphGeneratorService: ChartGeneratorService;
+
   constructor () {
     this.view = new EndGameView();
     this.service = RoomSingletonService.getInstance();
@@ -27,11 +28,13 @@ export default class EndGameController implements Controller {
     this.view.render();
     this.view.onDownloadResults(() => this.downloadResults());
     this.view.generateCollapsible(this.room?.estimatedUserStories ?? []);
-    this.renderChart();
+    if (this.room.estimatedUserStories) {
+      this.renderChart();
+    }
   }
 
   private renderChart () {
-    this.graphGeneratorService.renderChart('result-chart', this.room, true);
+    this.graphGeneratorService.renderChart('result-chart', this.room, 'Resultado jogadas %', 35, true);
   }
 
   private downloadResults () {

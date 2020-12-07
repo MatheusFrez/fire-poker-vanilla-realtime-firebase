@@ -334,6 +334,13 @@ export default class RoomController implements Controller {
         votes,
       });
       this.listPlayersWithVotes();
+
+      if (this.everyoneVoted) {
+        setTimeout(() => {
+          this.view.rotateCardsAndShowCounts();
+        }, 100);
+      }
+
       if (this.currentPlayer.isAdmin && this.everyoneVoted) {
         this.finishRound();
       }

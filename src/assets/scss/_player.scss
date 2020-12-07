@@ -23,9 +23,6 @@
   .card {
     width: 30px;
     height: 40px;
-    margin-left: 3px;
-    margin-top: -4.5px;
-    margin-bottom: -4.5px;
 
     .card__value__center {
       font-size: 16px;
@@ -37,5 +34,9 @@
       margin: 0;
       width: 15px;
     }
+  }
+
+  .hidden-count {
+    visibility: hidden;
   }
 }

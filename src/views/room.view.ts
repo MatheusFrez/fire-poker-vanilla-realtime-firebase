@@ -269,6 +269,17 @@ export default class RoomView extends View {
     this.cardsWrapper.classList.remove('hidden');
   }
 
+  public rotateCardsAndShowCounts (): void {
+    document.querySelectorAll('.innercontainer').forEach((element) => {
+      element.classList.remove('rotate-card');
+      element.classList.add('rotate-card');
+    });
+
+    document.querySelectorAll('.hidden-count').forEach((element) => {
+      element.classList.remove('hidden-count');
+    });
+  }
+
   private get btnWrapper (): HTMLButtonElement {
     return document.querySelector('.button-wrapper');
   }

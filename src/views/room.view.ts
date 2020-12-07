@@ -34,12 +34,9 @@ export default class RoomView extends View {
                 </li>
               </ul>
             </div>
-            <div class="col" id="result-container">
-
-            </div>
+            <div class="col hidden" id="result-container"></div>
             <div class="col">
               <div class="player-container">
-              <button class="waves-effect waves-light btn red accent-4" id="btn-leave">SAIR</button>
                 <div class="player-header">
                   <h6>Jogadores:</h6>
                   ${timer()}
@@ -51,14 +48,14 @@ export default class RoomView extends View {
                 <div class="button-wrapper"></div>
                 <ul class="collapsible">
                 <li>
-                  <div class="collapsible-header"><h6>Convite um colega</h6><i class="material-icons" id="arrow-collapsible">keyboard_arrow_down</i></div>
+                <div class="collapsible-header"><h6>Convite um colega</h6><i class="material-icons" id="arrow-collapsible">keyboard_arrow_down</i></div>
                   <div class="collapsible-body">
                     <div class="row">
                       <div class="col s10">
-                        <input type="text" id="input-link">
+                        <input type="text" id="input-link" readonly>
                       </div>
                       <div class="col s2">
-                        <span class="material-icons" id="btn-copy">
+                        <span class="material-icons" id="btn-copy" title="Copiar">
                           content_copy
                         </span>
                       </div>
@@ -66,6 +63,9 @@ export default class RoomView extends View {
                   </div>
                 </li>
               </ul>
+                <div class="center-align">
+                  <a class="waves-effect waves-light red-text" id="btn-leave">Sair</a>
+                </div>
               </div>
               <div class="col">
                 <section class="cards-history-container" id="histories-wrapper"></section>
@@ -78,14 +78,7 @@ export default class RoomView extends View {
   };
 
   protected setup (): void {
-    Collapsible.init(document.querySelectorAll('.collapsible'), {
-      onOpenStart: () => {
-        this.toggleArrow();
-      },
-      onCloseStart: () => {
-        this.toggleArrow();
-      },
-    });
+    Collapsible.init(document.querySelectorAll('.collapsible'));
     this.initializeLink();
   }
 
@@ -143,73 +136,49 @@ export default class RoomView extends View {
     document.querySelector('.card-history').classList.add('hidden');
   }
 
-  public hideCurrentResultStorie (): void {
-    document.querySelector('#result-container').classList.remove('visible-element');
-    document.querySelector('#result-container').classList.add('hidden-element');
-  }
-
-  public showCurrentResultStorie (): void {
-    document.querySelector('#result-container').classList.add('visible-element');
-  }
-
   public removeResultAndGraph () {
-    const resultContainer = document.getElementById('result-container');
-    resultContainer.remove();
+    this.resultElement.classList.add('hidden');
+    this.resultElement.innerHTML = '';
+    this.showCardsDeck();
   }
 
   public showStorieResultAndGraph (room: Room): void {
+    this.hideCardsDeck();
     const chartGenerator = new ChartGeneratorService();
     this.generateCardRound(room.round);
     chartGenerator.renderChart('result-chart-round', room, 'Resultado jogada %', 20);
   }
 
   public generateCardRound (round: Round): void {
-    const cardsNotEspecial: Array<Card> = round.votes.map(vote => vote.cards.filter(card => !card.isSpecial).map(card => card))[0];
-    const quantityCardsNotEspecial: number = cardsNotEspecial.length;
-    const totalValueCardsNotEspecial: number = cardsNotEspecial.reduce((total, card) => total + card.value, 0);
-    const averageCardsEspecialValue: number = Math.round(totalValueCardsNotEspecial / quantityCardsNotEspecial) || 0;
+    const totalValue = round.votes
+      .reduce((cards, vote) => {
+        cards.push(...vote.cards.filter((card) => !card.isSpecial));
+        return cards;
+      }, [] as Card[])
+      .reduce((total, card) => total + card.value, 0);
+    const average = Math.round(totalValue / round.votes.length) || 0;
 
-    const cardElement = document.getElementById('result-container');
-
-    cardElement.innerHTML = `
-        <div id="card-storie">
-          <div class="custom-card">
-            <div class="flex center">
-              <h5 id="no-consensus">Não houve consenso</h5>
-                <h6 class="card-title"><i><b>${round?.userStory?.name ?? ''}</b></i></h6>
-                <span><i>${round?.userStory?.description ?? ''}</i></span><br>
+    this.resultElement.innerHTML = `
+      <div id="card-storie">
+        <div class="flex center">
+          ${round?.result > 0
+            ? `
               <b>Estimativa:</b>
-              <span class="card-title" id="estimate-value">${round?.result ?? 0}</span>
-            </div>
-            <div class="center" id="limited-text">
-              <span class="card-title" style="margin-left: 10px;"><b>Média de cartas:</b> ${averageCardsEspecialValue}</span><br>
-              <hr>
-              ${round?.votes.map((vote) => {
-              return `
-              <div class="row">
-                <div class="col l4 s12" id="name-wrapper">
-                  <span class="material-icons">
-                  account_circle
-                  </span>${vote?.player?.name ?? ''}
-                </div>
-                <div class="col l7 s12" id="card-wrapper">
-                ${vote.cards.map((card) => {
-                return `
-                  <div class="mini-card">
-                    <span>${card?.symbol ?? ''}</span>
-                  </div>`;
-              }).join('')}
-              </div>`;
-              }).join('')}
-              </div>
-            </div>
-          </div>
+              <span class="card-title" id="estimate-value">${round?.result}</span>
+            `
+            : '<span class="card-title" id="estimate-value">Não houve concenso</span>'}
+          <br>
+          <span class="card-title">
+            <b>Média dos votos:</b> ${average}
+          </span>
         </div>
-        <div class="row" id="canvas-wrapper">
-          <canvas id="result-chart-round"></canvas>
-        </div>
+        <hr>
+      </div>
+      <div class="row" id="canvas-wrapper">
+        <canvas id="result-chart-round"></canvas>
+      </div>
    `;
-    this.showCurrentResultStorie();
+    this.resultElement.classList.remove('hidden');
   }
 
   public closeCardsDeck (): void {
@@ -272,10 +241,6 @@ export default class RoomView extends View {
       .addEventListener('click', callback);
   }
 
-  private toggleArrow (): void {
-    document.getElementById('arrow-collapsible').classList.toggle('transition');
-  }
-
   private initializeLink (): void {
     const input = document.getElementById('input-link') as HTMLInputElement;
     input.value = window.location.href;
@@ -287,10 +252,6 @@ export default class RoomView extends View {
       });
   }
 
-  public showStatusConsensus (): void {
-    document.getElementById('no-consensus').style.display = 'block';
-  }
-
   public updateEstimate (estimate: number): void {
     const element = document.getElementById('estimate-value');
     if (estimate <= 0) {
@@ -300,7 +261,23 @@ export default class RoomView extends View {
     }
   }
 
+  private hideCardsDeck (): void {
+    this.cardsWrapper.classList.add('hidden');
+  }
+
+  private showCardsDeck (): void {
+    this.cardsWrapper.classList.remove('hidden');
+  }
+
   private get btnWrapper (): HTMLButtonElement {
     return document.querySelector('.button-wrapper');
+  }
+
+  private get resultElement (): HTMLElement {
+    return document.getElementById('result-container');
+  }
+
+  private get cardsWrapper (): HTMLElement {
+    return document.querySelector('.col.cards');
   }
 }

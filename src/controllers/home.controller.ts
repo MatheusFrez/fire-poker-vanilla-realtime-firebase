@@ -74,22 +74,18 @@ export default class HomeController implements Controller {
   }
 
   private makeBasicVerificationsToJoinOnRoom (roomToJoin: Room, playerName: string): boolean {
-    let result: boolean = true;
-
     if (!roomToJoin) {
       toast('Sala não encontrada! <br>Verifique o nome da sala e tente novamente.');
-      result = false;
+      return false;
     };
-
     const playerNameAlreadyExists = roomToJoin.players.some(
       (player) => player.name.toLowerCase().trim() === playerName.toLowerCase().trim(),
     );
     if (playerNameAlreadyExists) {
       toast('Nome já existente! <br>Tente novamente com outro nome.');
-      result = false;
+      return false;
     };
-
-    return result;
+    return true;
   }
 
   private validate (playerName: string, roomName: string): boolean {

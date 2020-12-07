@@ -1,6 +1,8 @@
 import View from './view';
 import { Collapsible } from 'materialize-css';
-//  import UserStory from '../models/user-story';
+import UserStory from '../models/user-story';
+import playerItem from '../components/player';
+import Player from '../models/player';
 
 export default class EndGameView extends View {
   protected template (): string {
@@ -9,17 +11,14 @@ export default class EndGameView extends View {
       <div class="container">
         <div class="row">
           <div class="col l12 s12 m12">
-            <div class="col l12 s12 m12" id="headers-buttons">
-              <button id="btn-download-json" class="btn-flat"><i class="material-icons left">receipt_long</i>Resultado JSON</button>
-              <button id="btn-imprimir-json" class="btn-flat"><i class="material-icons left">print</i>Resultado</button>
-            </div>
-            <div class="col" id="room-without-result">
-            </div>
+            <div class="col" id="room-without-result"></div>
             <div class="card-panel lighten-1 z-depth-4" id="historias-list">
-              <ul class="collapsible expandable" id="collapsible">
-
-              </ul>
-              <div>
+              <div id="headers-buttons">
+                <button id="btn-download-json" class="btn-flat"><i class="material-icons left">receipt_long</i>Resultado JSON</button>
+                <button id="btn-imprimir-json" class="btn-flat"><i class="material-icons left">print</i>Resultado</button>
+              </div>
+              <ul class="collapsible expandable" id="collapsible"></ul>
+              <div class="wrapper-result">
                 <canvas id="result-chart"></canvas>
               </div>
             </div>
@@ -31,7 +30,7 @@ export default class EndGameView extends View {
   }
 
   protected setup (): void {
-    Collapsible.init(document.querySelectorAll('.collapsible'), { accordion: false });
+    Collapsible.init(document.querySelectorAll('.collapsible'));
     this.onPrintResults();
   }
 
@@ -55,7 +54,7 @@ export default class EndGameView extends View {
       .classList.toggle('hidden');
   }
 
-  public generateCollapsible (userStories: any[]): void {
+  public generateCollapsible (userStories: UserStory[]): void {
     const collapseElement = document.getElementById('collapsible');
     collapseElement.innerHTML = '';
     if (userStories && userStories.length !== 0) {
@@ -71,24 +70,15 @@ export default class EndGameView extends View {
         <div class="collapsible-body">
           <span>${userStory?.description ?? ''}</span>
           <hr>
-        ${userStory.votes.map((vote) => {
-          return `
-          <div class="row">
-            <div class="col l3 s12" id="name-wrapper">
-              <span class="material-icons">
-              account_circle
-              </span>${vote?.player?.name ?? ''}
-            </div>
-            <div class="col l8 s12" id="card-wrapper">
-          ${vote.cards.map((card) => {
-            return `
-              <div class="mini-card">
-                <span>${card?.symbol ?? ''}</span>
-              </div>`;
-          }).join('')}
-            </div>
-          </div>`;
-        }).join('')}
+          <table>
+            <tbody>
+              ${userStory.votes?.map((vote) => playerItem(new Player({
+                  ...vote.player,
+                  vote: vote.cards,
+                })),
+              ).join('')}
+            </tbody>
+          </table>
         </div>`;
         collapseElement.appendChild(element);
       });
@@ -106,12 +96,17 @@ export default class EndGameView extends View {
   }
 
   private printResults () {
+    const all = undefined;
     const callapsibleElement = document.querySelector('#collapsible');
-    const element = callapsibleElement.childNodes;
-    element.forEach((value, index) => {
-      const instance = Collapsible.getInstance(callapsibleElement);
-      instance.open(index);
-    });
-    setTimeout(() => window.print(), 500);
+    const instance = Collapsible.getInstance(callapsibleElement);
+    instance.options.accordion = false;
+    instance.close(all);
+    instance.options.onOpenEnd = () => window.print();
+    instance.open(all);
+    window.onafterprint = () => {
+      instance.close(all);
+      instance.options.onOpenEnd = null;
+      instance.options.accordion = true;
+    };
   }
 }

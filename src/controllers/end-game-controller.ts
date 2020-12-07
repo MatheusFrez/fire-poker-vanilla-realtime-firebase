@@ -12,6 +12,7 @@ export default class EndGameController implements Controller {
   private service: RoomSingletonService;
   private room: Room;
   private graphGeneratorService: ChartGeneratorService;
+
   constructor () {
     this.view = new EndGameView();
     this.service = RoomSingletonService.getInstance();

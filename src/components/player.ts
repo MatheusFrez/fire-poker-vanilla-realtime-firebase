@@ -10,7 +10,7 @@ const playerItem = (player: Player, currentPlayer = false): string => {
   const cards = player.vote || [];
   const count = getCountVote(cards);
   return `
-    <tr>
+    <tr class="player">
       <td class="truncate tooltipped" data-tooltip="${player.name}${player.isAdmin ? '<br>Coordenador' : ''}">
         <i class="material-icons
           ${currentPlayer

@@ -8,6 +8,12 @@
   width: 100vw;
   overflow-y: auto;
 
+  .container {
+    @media print {
+      width: 100% !important;
+    }
+  }
+
   .collapsible-header {
     display: flex;
     justify-content: space-between;
@@ -35,10 +41,13 @@
   }
 
   #headers-buttons {
-    margin-top: 25px;
-    margin-left: 15px;
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-around;
+
+    @media print {
+      display: none;
+    }
   }
 
   #historias-list {

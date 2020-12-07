@@ -10,26 +10,27 @@
   box-sizing: border-box;
 
   #result-container {
-    margin-top: 20px;
+    margin: 25px auto 0 auto;
+    width: 500px;
     background-color: #EDEBD7;
     border: 1px solid #423E37;
     box-sizing: border-box;
     box-shadow: 9px 11px 3px 0px rgba(0, 0, 0, 0.2);
     padding: 20px;
-    animation: fadeIn 3s;
+    animation: fadeIn 1.2s;
+
+    @media screen and (max-width: 520px) {
+      width: 93vw;
+    }
+
+    &.hidden {
+      display: none;
+    }
   }
 
   @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
- }
-
-  .hidden-element {
-    visibility: collapse;
-  }
-
-  .visible-element {
-    visibility: visible;
   }
 
   .custom-card {
@@ -86,6 +87,7 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    align-items: flex-start;
   }
 
   .player-header {
@@ -102,7 +104,22 @@
   }
 
   .cards {
-    margin: 25px auto 0 auto;
+    margin: 30px auto 0 auto;
+    opacity: 1;
+    visibility: visible;
+    transition-duration: 0.32s;
+    transition-timing-function: ease-in-out;
+    transition-property: opacity transform;
+
+    &.hidden {
+      transform: scale(0);
+      opacity: 0;
+      visibility: hidden;
+      margin: 0;
+      width: 0;
+      // position: absolute;
+      // display: none;
+    }
   }
 
   .player-container {
@@ -133,11 +150,18 @@
   .collapsible {
     box-shadow: none;
     border: none;
+
+    h6 {
+      font-size: 1rem;
+      margin: 0;
+    }
+
     .collapsible-header, .collapsible-body {
       background: transparent;
       box-shadow: none;
       border: none;
     }
+
     .collapsible-header {
       display: flex;
       justify-content: space-between;
@@ -149,10 +173,11 @@
     }
 
     #arrow-collapsible {
-      transition: all .5s ease-out;
-      &.transition {
-        transform: rotate(180deg);
-      }
+      transition: all .2s ease-out;
+    }
+
+    .active #arrow-collapsible  {
+      transform: rotate(-180deg);
     }
   }
 
@@ -166,6 +191,7 @@
 
   #btn-copy {
     vertical-align: middle;
+    cursor: pointer;
   }
 
   #no-consensus {
@@ -178,4 +204,8 @@
     margin-top: 20px;
   }
 
+  #btn-leave {
+    text-decoration: underline;
+    padding: 0 10px;
+  }
 }

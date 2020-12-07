@@ -73,7 +73,6 @@ export default class RoomController implements Controller {
       return router.push('/', id);
     }
     this.view.render();
-    this.view.hideCurrentResultStorie();
     this.showCurrentPlayerWithVotes();
     this.listPlayersWithVotes();
     this.lisStories();
@@ -90,7 +89,8 @@ export default class RoomController implements Controller {
   }
 
   private navigateToFinishRoute (): void {
-    router.push(`/room/${this.room.id}/end`);
+    this.clearStoreGameInfo();
+    return router.push(`/room/${this.room.id}/end`);
   }
 
   private async initRoom (id: string): Promise<boolean> {
@@ -128,10 +128,12 @@ export default class RoomController implements Controller {
     if (!this.currentPlayer.isAdmin) {
       return;
     }
-    if (!this.room.pendingUserStories?.length) {
-      this.view.showFinish(this.finishGame.bind(this));
-    } else if (!this.room.round) {
+    if (!this.room.round) {
       this.view.showInitGame(this.nextRound.bind(this));
+    } else if (this.room.round.result === 0) {
+      this.view.showRepeat(this.nextRound.bind(this));
+    } else if (this.isLastUserStorie) {
+      this.view.showFinish(this.finishGame.bind(this));
     } else {
       this.view.showNext(this.nextRound.bind(this));
     }
@@ -159,7 +161,7 @@ export default class RoomController implements Controller {
       cards: this.currentPlayer.vote,
     }));
     this.view.hideConfirm();
-    await this.service.upsert(this.room);
+    this.view.closeCardsDeck();
   }
 
   private insertVote (card: Card): boolean {
@@ -211,16 +213,19 @@ export default class RoomController implements Controller {
   }
 
   private async nextRound (): Promise<void> {
+    if (this.room.round?.result) {
+      this.movePendingToEstimated();
+    }
     const [nextUserStory] = this.room.pendingUserStories;
     const round: Round = new Round({
       attempts: this.room?.round?.attempts,
       timeRemaining: this.room.settings.timeout,
+      result: null,
       votes: [],
       userStory: nextUserStory,
       started: true,
     });
     this.room.round = round;
-    this.view.hideCurrentResultStorie();
     await this.service.upsert(this.room);
   }
 
@@ -248,6 +253,7 @@ export default class RoomController implements Controller {
 
   private clearVotes (): void {
     this.currentPlayer.vote = [];
+    this.room.round.votes = [];
     this.showCurrentPlayerWithVotes();
     this.listPlayersWithVotes();
   }
@@ -270,13 +276,11 @@ export default class RoomController implements Controller {
       this.room.estimatedUserStories = [];
     }
     this.room.estimatedUserStories.push(estimated);
-    this.room.round.attempts = 1;
-    this.room.round.result = null;
-    await this.service.upsert(this.room);
     this.updatePendingStories();
   }
 
   private async finishGame (): Promise<void> {
+    this.movePendingToEstimated();
     this.room.finished = true;
     await this.service.upsert(this.room);
   }
@@ -290,21 +294,23 @@ export default class RoomController implements Controller {
     this.room.round.finished = true;
     this.room.round.timeRemaining = this.room.settings.timeout;
     await this.service.upsert(this.room);
-    const estimate = this.estimateService.calculateEstimate(this.room);
-    if (estimate > 0) {
+  }
+
+  private async calculateAndShowResults (): Promise<void> {
+    const hasNoResult = this.room.round.result === null ||
+      this.room.round.result === undefined;
+    if (hasNoResult) {
+      const estimate = this.estimateService.calculateEstimate(this.room);
       this.room.round.result = estimate;
-      await this.movePendingToEstimated();
-    } else {
-      this.view.showStatusConsensus();
-      this.room.round.attempts++;
-      return this.view.showRepeat(this.nextRound.bind(this));
+      if (!estimate) {
+        this.room.round.attempts++;
+      }
+      if (this.currentPlayer.isAdmin) {
+        this.service.upsert(this.room);
+      }
     }
-    this.view.updateEstimate(estimate);
-    if (!this.room.pendingUserStories.length) {
-      this.view.showFinish(this.finishGame.bind(this));
-    } else {
-      this.view.showNext(this.nextRound.bind(this));
-    }
+    this.view.showStorieResultAndGraph(this.room);
+    this.initAdminMode();
   }
 
   private listenForPendingStories (id: string): void {
@@ -338,8 +344,11 @@ export default class RoomController implements Controller {
     this.roundService.listenForStarted().subscribe((started: boolean) => {
       this.room.round = new Round({
         ...this.room.round,
+        result: null,
+        votes: [],
         started,
       });
+      this.view.removeResultAndGraph();
       this.clearVotes();
       this.view.openCardsDeck();
       this.view.showConfirm(this.confirmVote.bind(this));
@@ -357,13 +366,9 @@ export default class RoomController implements Controller {
       });
       this.setDefaultIfCurrentPlayerNotVote();
       this.view.closeCardsDeck();
-      this.showGraphAndResults();
       this.view.hideConfirm();
+      this.calculateAndShowResults();
     });
-  }
-
-  private showGraphAndResults () {
-    this.view.showStorieResultAndGraph(this.room);
   }
 
   private listenForTimer (): void {
@@ -379,7 +384,6 @@ export default class RoomController implements Controller {
     this.service.listenCollection(id, 'finished').subscribe((finished: boolean) => {
       if (finished) {
         this.navigateToFinishRoute();
-        this.clearStoreGameInfo(); // Endgame?
       }
     });
   }
@@ -392,7 +396,7 @@ export default class RoomController implements Controller {
     }
     this.service.upsert(this.room);
     this.clearStoreGameInfo();
-    router.push('/');
+    return router.push('/');
   }
 
   public clearStoreGameInfo (): void {
@@ -405,5 +409,9 @@ export default class RoomController implements Controller {
 
   private get everyoneVoted (): boolean {
     return this.room.round.votes?.length >= this.room.players.length;
+  }
+
+  private get isLastUserStorie (): boolean {
+    return this.room.pendingUserStories.length === 1;
   }
 }

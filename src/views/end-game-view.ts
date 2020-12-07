@@ -75,7 +75,7 @@ export default class EndGameView extends View {
               ${userStory.votes?.map((vote) => playerItem(new Player({
                   ...vote.player,
                   vote: vote.cards,
-                })),
+                }), true),
               ).join('')}
             </tbody>
           </table>

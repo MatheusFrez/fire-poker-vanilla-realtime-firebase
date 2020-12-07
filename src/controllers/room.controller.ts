@@ -276,6 +276,8 @@ export default class RoomController implements Controller {
       this.room.estimatedUserStories = [];
     }
     this.room.estimatedUserStories.push(estimated);
+    this.room.round.attempts = 1;
+    this.roundService.updateAttempts(this.room.round.attempts);
     this.updatePendingStories();
   }
 

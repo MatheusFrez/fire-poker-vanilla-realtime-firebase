@@ -17,6 +17,11 @@ export default class RoundService {
       .push(toSimpleJson(vote));
   }
 
+  public async updateAttempts (attempt: number): Promise<void> {
+    await fireDb.ref(`${this.path}/attempts`)
+      .set(attempt);
+  }
+
   public listenForVotes (): Observable<Vote[]> {
     return new Observable(
       (observer) => {

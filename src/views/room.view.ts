@@ -11,6 +11,7 @@ import playerItem from '../components/player';
 import Round from '../models/round';
 import ChartGeneratorService from '../services/chart-generator-service';
 import Room from '../models/room';
+import Vote from '../models/vote';
 
 export default class RoomView extends View {
   protected template (): string {
@@ -150,13 +151,14 @@ export default class RoomView extends View {
   }
 
   public generateCardRound (round: Round): void {
-    const totalValue = round.votes
+    const votesNotEspecial: Array<Vote> = round.votes.filter((vote) => vote.cards.findIndex(card => !card.isSpecial) !== -1);
+    const totalValue = votesNotEspecial.map(vote => vote)
       .reduce((cards, vote) => {
         cards.push(...vote.cards.filter((card) => !card.isSpecial));
         return cards;
       }, [] as Card[])
       .reduce((total, card) => total + card.value, 0);
-    const average = Math.round(totalValue / round.votes.length) || 0;
+    const average = Math.round(totalValue / votesNotEspecial.length) || 0;
 
     this.resultElement.innerHTML = `
       <div id="card-storie">

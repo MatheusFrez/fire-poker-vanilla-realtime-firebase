@@ -1,6 +1,6 @@
 import Card from '../models/card';
 import Player from '../models/player';
-import { cardDeck } from './card';
+import { cardDeck, cardsDeckFlip } from './card';
 
 const getCountVote = (cards: Card[]): number => {
   return cards.reduce((acc, card) => acc + card.value, 0);
@@ -23,9 +23,9 @@ const playerItem = (player: Player, currentPlayer = false): string => {
       <td>
         <div class="player-vote">
           <div class="player-vote__cards">${
-            cards.map((card) => cardDeck(card)).join('')
+            cards.map((card) => currentPlayer ? cardDeck(card) : cardsDeckFlip(card)).join('')
           }</div>
-          <span class="grey-text text-darken-2">${count ? `= ${count}` : ''}</span>
+          <span class="grey-text text-darken-2 ${!currentPlayer ? 'hidden-count' : ''}">${count ? `= ${count}` : ''}</span>
         </div>
       </td>
     </tr>

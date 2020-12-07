@@ -50,6 +50,11 @@ export default class RoomSingletonService {
       .set(toSimpleJson(room));
   }
 
+  public async updateTimeRemaining (room: Room): Promise<void> {
+    return fireDb.ref(`${this.collection}/${room.id}/round/timeRemaining`)
+      .set(room.round.timeRemaining);
+  }
+
   public listenCollection (id: string, field: string): Observable<any> {
     try {
       return new Observable(

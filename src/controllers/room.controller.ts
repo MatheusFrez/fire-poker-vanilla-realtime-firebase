@@ -208,7 +208,7 @@ export default class RoomController implements Controller {
         return;
       }
       this.room.round.timeRemaining--;
-      this.service.upsert(this.room);
+      this.service.updateTimeRemaining(this.room);
     }, 1000);
   }
 

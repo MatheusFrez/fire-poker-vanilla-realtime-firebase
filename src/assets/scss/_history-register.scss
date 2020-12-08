@@ -5,10 +5,6 @@
   background-attachment: fixed;
   backdrop-filter: brightness(0.6);
 
-  .card-panel {
-    position: relative;
-  }
-
   #modal-register {
     max-width: 530px;
   }
@@ -24,6 +20,7 @@
   }
 
   .card-panel {
+    position: relative;
     width: 100%;
     max-width: 500px;
     display: flex;

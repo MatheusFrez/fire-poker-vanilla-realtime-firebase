@@ -32,6 +32,10 @@ input::placeholder {
 html, body {
   height: 100%;
   overflow: hidden;
+
+  @media print {
+    height: auto;
+  }
 }
 
 .collapsible-body {

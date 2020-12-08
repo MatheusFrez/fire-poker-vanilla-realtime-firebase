@@ -23,6 +23,8 @@ export default class EstimateSingletonService {
     let storyPointsDistanceLimit = 5;
     const totalEstimates: Estimate[] = this.formatArrTotalEstimate(room.round.votes);
 
+    if (!totalEstimates.length) return 0;
+
     if (room.round.attempts === 3) {
       const amountPerEstimates = totalEstimates.reduce((acc, value) => {
         const index = acc.findIndex((perEstimate: AgruppedEstimate) => perEstimate.estimate === value.estimate);
@@ -64,7 +66,7 @@ export default class EstimateSingletonService {
   private formatArrTotalEstimate (array: Vote[]): Estimate[] {
     return array.map((value) => {
       return {
-        estimate: value.cards.reduce((acc, value) => value.value ? acc + value.value : 0, 0),
+        estimate: value.cards.reduce((acc, value) => value.value ? acc + value.value : acc + 0, 0),
       };
     }).filter(value => value.estimate);
   }

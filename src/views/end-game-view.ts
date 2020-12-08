@@ -14,6 +14,7 @@ export default class EndGameView extends View {
             <div class="col" id="room-without-result"></div>
             <div class="card-panel lighten-1 z-depth-4" id="historias-list">
               <div id="headers-buttons">
+                <a href="/" class="btn-flat"><i class="material-icons left">home</i>Página inicial</a>
                 <button id="btn-download-json" class="btn-flat"><i class="material-icons left">receipt_long</i>Resultado JSON</button>
                 <button id="btn-imprimir-json" class="btn-flat"><i class="material-icons left">print</i>Resultado</button>
               </div>

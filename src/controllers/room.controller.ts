@@ -226,7 +226,7 @@ export default class RoomController implements Controller {
       started: true,
     });
     this.room.round = round;
-    await this.roundService.update(this.room.round);
+    await this.service.upsert(this.room);
   }
 
   private setDefaultVotes (): void {

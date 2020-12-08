@@ -10,7 +10,7 @@ import toast from '../common/toast';
 import { PLAYER_ITEM, ROOM_ITEM } from '../common/constants';
 
 import getDeckByName from '../common/decks';
-import Settings from '../models/settings';
+import Settings, { EstimateType } from '../models/settings';
 export default class HistoryRegisterController implements Controller {
   private view: HistoryRegisterView;
   private userStories: UserStory[];
@@ -155,7 +155,7 @@ export default class HistoryRegisterController implements Controller {
     this.settings = new Settings({
       deck: getDeckByName(this.view.deckRadioValue),
       timeout: Number(this.view.timeOutInput.value),
-      estimateType: this.view.estimateTypeValue,
+      estimateType: this.view.estimateTypeValue as EstimateType,
     });
   }
 }

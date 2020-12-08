@@ -1,7 +1,7 @@
 import { mixedDeck } from '../common/decks';
 import Deck from './deck';
 
-type EstimateType = 'higher' | 'average';
+export type EstimateType = 'higher' | 'average';
 export default class Settings {
   public id?: string;
   public timeout: number;

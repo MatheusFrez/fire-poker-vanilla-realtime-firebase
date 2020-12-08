@@ -2,6 +2,7 @@ import { Observable } from 'rxjs';
 import toSimpleJson from '../common/simple-json';
 
 import Room from '../models/room';
+import Round from '../models/round';
 import Vote from '../models/vote';
 import { fireDb } from '../plugins/firebase';
 
@@ -20,6 +21,16 @@ export default class RoundService {
   public async updateAttempts (attempt: number): Promise<void> {
     await fireDb.ref(`${this.path}/attempts`)
       .set(attempt);
+  }
+
+  public async updateTimeRemaining (timeRemaining: number): Promise<void> {
+    return fireDb.ref(`${this.path}/timeRemaining`)
+      .set(timeRemaining);
+  }
+
+  public async update (round: Round): Promise<void> {
+    return fireDb.ref(this.path)
+      .set(round);
   }
 
   public listenForVotes (): Observable<Vote[]> {

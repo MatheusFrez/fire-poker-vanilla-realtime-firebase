@@ -208,7 +208,7 @@ export default class RoomController implements Controller {
         return;
       }
       this.room.round.timeRemaining--;
-      this.service.updateTimeRemaining(this.room);
+      this.roundService.updateTimeRemaining(this.room.round.timeRemaining);
     }, 1000);
   }
 
@@ -226,7 +226,7 @@ export default class RoomController implements Controller {
       started: true,
     });
     this.room.round = round;
-    await this.service.upsert(this.room);
+    await this.roundService.update(this.room.round);
   }
 
   private setDefaultVotes (): void {
@@ -295,7 +295,7 @@ export default class RoomController implements Controller {
     this.room.round.started = false;
     this.room.round.finished = true;
     this.room.round.timeRemaining = this.room.settings.timeout;
-    await this.service.upsert(this.room);
+    await this.roundService.update(this.room.round);
   }
 
   private async calculateAndShowResults (): Promise<void> {
@@ -308,7 +308,7 @@ export default class RoomController implements Controller {
         this.room.round.attempts++;
       }
       if (this.currentPlayer.isAdmin) {
-        this.service.upsert(this.room);
+        this.roundService.update(this.room.round);
       }
     }
     this.view.showStorieResultAndGraph(this.room);

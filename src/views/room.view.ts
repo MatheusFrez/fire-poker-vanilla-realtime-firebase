@@ -122,6 +122,7 @@ export default class RoomView extends View {
   public async listPlayers (players: Player[]): Promise<void> {
     const tbody = document.getElementById('tbody');
     tbody.innerHTML = players.map((player) => playerItem(player)).join('');
+    this.clearTooltips();
     Tooltip.init(document.querySelectorAll('.tooltipped'), {
       exitDelay: 0,
       margin: 0,
@@ -279,6 +280,15 @@ export default class RoomView extends View {
 
     document.querySelectorAll('.hidden-count').forEach((element) => {
       element.classList.remove('hidden-count');
+    });
+  }
+
+  private clearTooltips (): void {
+    document.querySelectorAll('.tooltipped')?.forEach((element) => {
+      Tooltip.getInstance(element)?.destroy();
+    });
+    document.querySelectorAll('.material-tooltip')?.forEach((element) => {
+      element.remove();
     });
   }
 

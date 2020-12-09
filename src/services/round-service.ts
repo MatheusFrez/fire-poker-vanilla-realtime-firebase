@@ -30,7 +30,7 @@ export default class RoundService {
 
   public async update (round: Round): Promise<void> {
     return fireDb.ref(this.path)
-      .set(round);
+      .set(toSimpleJson(round));
   }
 
   public listenForVotes (): Observable<Vote[]> {

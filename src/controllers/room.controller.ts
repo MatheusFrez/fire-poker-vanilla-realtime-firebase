@@ -276,8 +276,6 @@ export default class RoomController implements Controller {
       this.room.estimatedUserStories = [];
     }
     this.room.estimatedUserStories.push(estimated);
-    this.room.round.attempts = 1;
-    this.roundService.updateAttempts(this.room.round.attempts);
     this.updatePendingStories();
   }
 
@@ -306,6 +304,8 @@ export default class RoomController implements Controller {
       this.room.round.result = estimate;
       if (!estimate) {
         this.room.round.attempts++;
+      } else {
+        this.room.round.attempts = 1;
       }
       if (this.currentPlayer.isAdmin) {
         this.roundService.update(this.room.round);
